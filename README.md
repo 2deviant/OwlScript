@@ -1,3 +1,3 @@
-# OwlCode
+# OwlScript
 
-For now: [OwlCode website](http://2deviant.github.io/OwlCode/).
+For now: [OwlScript website](http://2deviant.github.io/OwlScript/).
