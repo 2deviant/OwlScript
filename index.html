@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+        <title>OwlScript</title>
+        <link href='css.css' rel='stylesheet'/>
+    </head>
+    <body>
+        <div id='header'>
+            <div id='menu'>
+                <a href='index.html'>Home</a>
+                <a href='about.html'>About</a>
+                <a href='download.html'>Download</a>
+                <a href='documentation.html'>Documentation</a>
+            </div>
+            The greatest <span>obstacles</span> to learning programming are <span>setup</span> and <span>syntax</span>.
+        </div>
+        <div class='columns'>
+            <div>
+                <h2>The Perils of Complexity</h2>
+                Twenty years ago: turn on a computer and 
+                begin programming. Today: five downloads, three system restarts,
+                and twenty lines of code produce nothing but cryptic errors.
+            </div>
+            <div>
+                <h2>OwlScript</h2>
+                <span>Seconds</span> to deploy, <span>minutes
+                to learn</span>, only a <span>web browser</span>.
+                to run. <a href='documentation/shapes.html' download>Download</a>
+                this file, edit it, double-click it.
+            </div>
+        </div>
+        <div class='separator'></div>
+        <div class='columns'>
+            <div>
+                <h2>Draw</h2>
+                <div>
+                    <img src='img/circle.png' alt=''/>
+                    <pre>circle(width/2, height/2, 50)</pre>
+                </div>
+                Dimensions of the screen are provided and
+                updated on resize, no need to define them.
+
+            </div>
+            <div>
+                <h2>Color</h2>
+                <div>
+                    <img src='img/disk.png' alt=''/>
+                    <pre><span>disk</span>(width/2, height/2, 50, <span>'green'</span>)</pre>
+                </div>
+                Common color names are recognized.
+            </div>
+        </div>
+        <div class='columns'>
+            <div>
+                <h2>Create</h2>
+                <div>
+                    <img src='img/disks.png' alt=''/>
+                </div>
+                    <pre>loop(100, {
+    disk(
+        random(0, width),
+        random(0, height),
+        random(10, 50),
+        random('color')
+    )
+})</pre>
+                Syntactically straight-forward loops, versatile randomness.
+            </div>
+            <div>
+                <h2>Explore</h2>
+                <div>
+                    <img src='img/modern.png' alt=''/>
+                </div>
+                <pre>d = 2*max(width, height);
+
+loop(0, d, 50, x {
+    loop(0, d, 50, y {
+        disk(
+            x%y, y%x,
+            10 + random(0,15),
+            random('color')
+        )
+    })
+})</pre>
+            </div>
+        </div>
+        <div id='footer'>
+        </div>
+    </body>
+</html>
+

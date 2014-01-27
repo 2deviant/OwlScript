@@ -1,0 +1,22 @@
+<script src='http://2deviant.github.io/OwlScript/owlscript_min.js'></script><a id='owlscript'>
+
+function main() {
+
+    // loop the code inside { } 100 times
+    loop(100, {
+
+        // fill-in circle
+        disk(
+            // a random x corrdinate from 0 to width
+            random(0, width),
+            // a random x corrdinate from 0 to height
+            random(0, height),
+            // random radius from 10 to 50
+            random(10, 50),
+            // random color (from 4096 colors)
+            random('color')
+        )
+    })
+
+}
+</a>

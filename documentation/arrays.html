@@ -1,0 +1,17 @@
+<script src='http://2deviant.github.io/OwlScript/owlscript_min.js'></script><a id='owlscript'>
+
+function main() {
+
+    // create an array of numbers from 50 to 500 in steps of 25
+    radii = range(50, 250, 25)
+    
+    // go through the array, setting the variable r to each element
+    radii.loop( r {
+
+        // center x, center y, radius r, random color, line width 20
+        circle(width/2, height/2, r, random('color'), 20)
+
+    })  
+}
+
+</a>

@@ -1,0 +1,24 @@
+<script src='http://2deviant.github.io/OwlScript/owlscript_min.js'></script><a id='owlscript'>
+
+function main() {
+
+    // set the defaults
+    set_default_background_color('black');
+    set_default_color('lime');
+    set_default_line_width(3);
+
+    // diagonal lines
+    // from (x0, y0) to (x1, y1)
+    line(0,0, width,height);
+    line(width,0, 0,height);
+
+    // vertical and horizontal lines
+    line(0,height/2, width,height/2);
+    line(width/2,0, width/2,height);
+
+    // the radius of the disk is 1/4 of the smallest dimension
+    // x, y, radius, color
+    disk(width/2, height/2, min(width, height)/4, 'red');
+
+}
+</a>
