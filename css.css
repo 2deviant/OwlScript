@@ -1,8 +1,6 @@
 body {
     margin:0;
-    font-family:Open Sans,Source Sans Pro,Helvetica,Arial,sans-serif;
-    font-weight:300;
-    font-size:14pt;
+    font:300 14pt Open Sans,Source Sans Pro,Helvetica,Arial,sans-serif;
 }
 
 a {
@@ -21,22 +19,29 @@ a {
     font-size:135%;
 }
 
-#header #menu {
+#menu {
     position:absolute;
     bottom:0;
     right:0;
+    background:#fff;
+    border-top-left-radius:1em;
+    padding:.25em;
 }
 
 #menu a {
-    font:10pt verdana,tahoma;
+    font:12pt verdana,tahoma;
+    color:#4bb27b;
     text-decoration:none;
-    margin:.5em;
-    color:#fff;
+    margin:0 .5em;
     text-transform:lowercase;
 }
 
-#menu a:last-child {
-    margin-right:1em;
+#menu a:before {
+    content:'{';
+}
+
+#menu a:after {
+    content:'}';
 }
 
 h1, h2 {
