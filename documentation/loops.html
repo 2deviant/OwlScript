@@ -2,11 +2,8 @@
 
 function main() {
 
-    // create an array of numbers from 50 to 500 in steps of 25
-    radii = range(50, 250, 25)
-    
-    // go through the array, setting the variable r to each element
-    radii.loop( r {
+    // loop the variable r from 50 to 250 in steps of 25
+    loop(50, 250, 25, r {
 
         // center x, center y, radius r, random color, line width 20
         circle(width/2, height/2, r, random('color'), 20)
