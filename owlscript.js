@@ -1,5 +1,5 @@
 /*
- * OwlScript v0.1 by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript v0.11 by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -12,15 +12,15 @@
 /*** Drawing ******************************************************************/
 /******************************************************************************/
 
-// canvas information object
-var _canvases = {};
+// canvas object
+var _canvas_object;
 
-// ID of the current canvas
-var _current_canvas_id;
+// canvas itself
+var _canvas;
 
 // default drawing parameters
-var _default_color              = 'black';
-var _default_background_color   = 'white';
+var _default_color              = '#000';
+var _default_background_color   = '#fff';
 var _default_line_width         = 1;
 
 // some recurring constants (for minification)
@@ -39,62 +39,28 @@ var _animation_in_progress = 0;
 
 // self-explanatory
 function set_default_color(color) {
-    _canvases[_current_canvas_id]._color = color;
+    _default_color = color;
 }
 
 // self-explanatory
 function set_default_line_width(width) {
-    _canvases[_current_canvas_id]._line_width = width;
+    _default_line_width = width;
 }
 
 // self-explanatory
 function set_default_background_color(color) {
     // store the color in the current canvas object
-    _canvases[_current_canvas_id]._background_color =
+    _default_background_color =
     // change the style of the canvas
-    $(_current_canvas_id).style.backgroundColor = color;
-}
-
-// sets the current canvas and retrieves its defaults
-function set_canvas(id) {
-
-    // retrieve the current canvas ID
-    _current_canvas_id = id;
-
-    // if the canvas doesn't exist, create it
-    if(!_canvases[id]) {
-        // initiate the associative array
-        _canvases[id] = {};
-        // create the canvas object
-        _canvases[id]._canvas = $(id).getContext("2d");
-        // set the defaults
-        _canvases[id]._color             = _default_color;
-        _canvases[id]._line_width        = _default_line_width;
-        _canvases[id]._background_color  = _default_background_color;
-    }
-    // retrieve the dimensions of the canvas
-    width  = $(id).getAttribute('width');
-    height = $(id).getAttribute('height');
-}
-
-// if the width is supplied, return it
-// otherwise return the default
-function _get_default_line_width(width) {
-    return width || _canvases[_current_canvas_id]._line_width;
-}
-
-// if the color is supplied, return it
-// otherwise return the default
-function _get_default_color(color) {
-    return color || _canvases[_current_canvas_id]._color;
+    _canvas_object.style.backgroundColor = color;
 }
 
 // self-explanatory
 function line(x0, y0, x1, y1, color, width) {
-    with(_canvases[_current_canvas_id]._canvas) {
+    with(_canvas) {
         beginPath();
-        lineWidth = _get_default_line_width(width);
-        strokeStyle = _get_default_color(color);
+        lineWidth = width || _default_line_width;
+        strokeStyle = color || _default_color;
         moveTo(x0, y0);
         lineTo(x1, y1);
         stroke();
@@ -103,10 +69,10 @@ function line(x0, y0, x1, y1, color, width) {
 
 // self-explanatory
 function circle(x, y, r, color, width) {
-    with(_canvases[_current_canvas_id]._canvas) {
+    with(_canvas) {
         beginPath();
-        lineWidth = _get_default_line_width(width);
-        strokeStyle = _get_default_color(color);
+        lineWidth = width || _default_line_width;
+        strokeStyle = color || _default_color;
         arc(x, y, r, 0, _tau, 0);
         stroke();
     }
@@ -114,9 +80,9 @@ function circle(x, y, r, color, width) {
 
 // self-explanatory (filled circle)
 function disk(x, y, r, color) {
-    with(_canvases[_current_canvas_id]._canvas) {
+    with(_canvas) {
         beginPath();
-        fillStyle = _get_default_color(color);
+        fillStyle = color || _default_color;
         arc(x, y, r, 0, _tau, 0);
         fill();
     }
@@ -124,10 +90,10 @@ function disk(x, y, r, color) {
 
 // self-explanatory
 function rectangle(x0, y0, x1, y1, color, width) {
-    with(_canvases[_current_canvas_id]._canvas) {
+    with(_canvas) {
         beginPath();
-        lineWidth = _get_default_line_width(width);
-        strokeStyle = _get_default_color(color);
+        lineWidth = width || _default_line_width;
+        strokeStyle = color || _default_color;
         rect(x0, y0, x1-x0, y1-y0);
         stroke();
     }
@@ -135,18 +101,18 @@ function rectangle(x0, y0, x1, y1, color, width) {
 
 // self-explanatory (filled recrangle)
 function sheet(x0, y0, x1, y1, color) {
-    with(_canvases[_current_canvas_id]._canvas) {
-        fillStyle = _get_default_color(color);
+    with(_canvas) {
+        fillStyle = color || _default_color;
         fillRect(x0, y0, x1-x0, y1-y0);
     }
 }
 
 // self-explanatory
 function polygon(x, y, color, width) {
-    with(_canvases[_current_canvas_id]._canvas) {
+    with(_canvas) {
         beginPath();
-        lineWidth = _get_default_line_width(width);
-        strokeStyle = _get_default_color(color);
+        lineWidth = width || _default_line_width;
+        strokeStyle = color || _default_color;
         moveTo(x[0], y[0]);
         for(var i = 1; i < x.length; i++)
             lineTo(x[i], y[i]);
@@ -167,7 +133,7 @@ function regular_polygon(x, y, r, n, color, width) {
 
 // erase with the current background color
 function clear_canvas() {
-    sheet(0, 0, width, height, _canvases[_current_canvas_id]._background_color);
+    sheet(0, 0, width, height, _default_background_color);
 }
 
 /******************************************************************************/
@@ -186,12 +152,12 @@ function _clone_canvas(canvas) {
 // self-explanatory
 function begin_animation() {
     // create the _frames entry
-    _frames[_current_canvas_id] = [];
+    _frames = [];
 }
 
 // store the current frame
 function new_frame() {
-    _frames[_current_canvas_id].push(_clone_canvas($(_current_canvas_id)));
+    _frames.push(_clone_canvas(_canvas_object));
 }
 
 // start the animation
@@ -201,20 +167,19 @@ function animate(delay) {
     _animation_in_progress = 1;
 
     // initiate the animation cycle at a default rate of 10 fps
-    _animation_cycle(_current_canvas_id, 0, delay*1000 || 100);
+    _animation_cycle(0, delay*1000 || 100);
 }
 
 // animation cycle handler
-function _animation_cycle(id, index, delay) {
+function _animation_cycle(index, delay) {
 
     // display the current frame
-    _canvases[id]._canvas.drawImage(_frames[id][index % _frames[id].length],0,0);
+    _canvas.drawImage(_frames[index % _frames.length],0,0);
 
     // schedule the display of the next frame
     setTimeout(function() {
-        _animation_cycle(id, index+1, delay);
+        _animation_cycle(index+1, delay);
     }, delay);
-
 }
 
 /******************************************************************************/
@@ -260,7 +225,6 @@ function loop(from, to, step, action) {
 
 // define a universal argument function
 function _define(name, action) {
-
     window[name] = function(x) {
             var $ = [];
             // if the argument is an array, perform action() on each element
@@ -285,20 +249,7 @@ for(var _name in _body = {
     'negative'  : function(y) { return -y }
 })
     _define(_name, _body[_name]);
-/*
-    window[_name] = (function(action) {
-        return function(x) {
-            var $ = [];
-            // if the argument is an array, perform action() on each element
-            if(typeof x === _object)
-                for(var i = x.length; i-->0; $[i] = action(x[i]));
-            // otherwise, i.e number or a string, return action(x)
-            else
-                $ = action(x);
-            return $;
-        };
-    })(_body[_name]);
-*/
+
 // returns a "random" number between min and max
 //
 // if either of the arguments is a floating-point number, so is the returned
@@ -368,17 +319,17 @@ function print(text, color) {
     text += '';
 
     // show text
-    $('_2_').innerHTML 
+    $('_notebook').innerHTML 
         += '<div style="color:' +
-        _get_default_color(color)
+        (color || _default_color)
         +'">'
         + text.replace(/\s/g, '&nbsp')
         + '</div>';
 }
 
-// call the caller of this function again after a default delay of 1 second
+// call the caller of this function again after a default delay of 0.1 seconds
 function repeat(delay) {
-    setTimeout(arguments.callee.caller, delay*1000 || 1);
+    setTimeout(arguments.callee.caller, delay*1000 || 100);
 }
 
 // returns time in a neat object
@@ -428,8 +379,8 @@ function $(id) {
 function _parse(code) {
         // x { ==> function(x) {
     return code.replace(/(\w)\s*{/g, 'function($1){')
-        // loop(50, { ==> loop(50, function(__x) {
-        .replace(/loop\s*\((.*,)\s*{/g, 'loop($1 function(__x){')
+        // loop(50, { ==> loop(50, function($$$) {
+        .replace(/loop\s*\((.*,)\s*{/g, 'loop($1 function($$$){')
         // f(x) = sin(x+1) ==> _define("f", function(x) { return sin(x); });
         .replace(/(\w+)\s*\(\s*(\w+)\s*\)\s*=\s*(.*)/g, '_define("$1",function($2){return($3)});');
 }
@@ -442,11 +393,11 @@ function _parse(code) {
 function _initialize_image() {
 
     // clear the screen
-    $(_current_canvas_id).width  = width  = window.innerWidth;
-    $(_current_canvas_id).height = height = window.innerHeight;
+    _canvas_object.width  = width  = window.innerWidth;
+    _canvas_object.height = height = window.innerHeight;
 
     // clear the text screen
-    $('_2_').innerHTML = '';
+    $('_notebook').innerHTML = '';
 
     // execute the code
     main();
@@ -457,18 +408,20 @@ window.onload = function() {
 
     var body = document.getElementsByTagName('body')[0];
 
-    // create and ID the canvas element
-    body.appendChild(
-            document.createElement('canvas')
-        ).id = '_1_';
-    set_canvas('_1_');
+    // create canvas element
+    _canvas_object = body.appendChild(
+        document.createElement('canvas')
+    );
+
+    // get the drawing context
+    _canvas = _canvas_object.getContext("2d");
 
     // set the body margin to zero
     body.style.margin = 0;
 
     // create and ID the notebook element
     var notebook = document.createElement('div');
-    notebook.id = '_2_';
+    notebook.id = '_notebook';
     notebook.style.position = 'absolute';
     notebook.style.top = '0';
     notebook.style.left = '0';
@@ -497,5 +450,3 @@ window.onload = function() {
 window.onresize = function() {
     !_animation_in_progress && _initialize_image();
 }
-
-
