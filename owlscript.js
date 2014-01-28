@@ -379,6 +379,8 @@ function $(id) {
 function _parse(code) {
         // x { ==> function(x) {
     return code.replace(/(\w)\s*{/g, 'function($1){')
+        // , , ==> , 0 ,   or   ( , ==> ( 0 ,
+        .replace(/([(,])\s*,/g, '$1 0,')
         // loop(50, { ==> loop(50, function($$$) {
         .replace(/loop\s*\((.*,)\s*{/g, 'loop($1 function($$$){')
         // f(x) = sin(x+1) ==> _define("f", function(x) { return sin(x); });
