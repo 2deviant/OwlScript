@@ -329,6 +329,9 @@ function print(text, color) {
 
 // call the caller of this function again after a default delay of 0.1 seconds
 function repeat(delay) {
+    // raise the "do not redraw" flag
+    _animation_in_progress = 1;
+    // call the caller
     setTimeout(arguments.callee.caller, delay*1000 || 100);
 }
 
@@ -398,6 +401,10 @@ function _initialize_image() {
     _canvas_object.width  = width  = window.innerWidth;
     _canvas_object.height = height = window.innerHeight;
 
+    // do not re-render if animaiton or repeat() is in progress
+    if(_animation_in_progress)
+        return;
+
     // clear the text screen
     $('_notebook').innerHTML = '';
 
@@ -450,5 +457,5 @@ window.onload = function() {
 
 // redraw on resize
 window.onresize = function() {
-    !_animation_in_progress && _initialize_image();
+    _initialize_image();
 }
