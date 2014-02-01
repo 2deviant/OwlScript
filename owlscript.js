@@ -1,5 +1,5 @@
 /*
- * OwlScript v0.11 by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript v0.12 by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -17,6 +17,9 @@ var _canvas_object;
 
 // canvas itself
 var _canvas;
+
+// notebook object
+var _notebook;
 
 // default drawing parameters
 var _default_color              = '#000';
@@ -36,6 +39,7 @@ var _frames = [];
 
 // flags
 var _animation_in_progress = 0;
+var _stop_loops = 0;
 
 // self-explanatory
 function set_default_color(color) {
@@ -177,9 +181,15 @@ function _animation_cycle(index, delay) {
     _canvas.drawImage(_frames[index % _frames.length],0,0);
 
     // schedule the display of the next frame
-    setTimeout(function() {
-        _animation_cycle(index+1, delay);
-    }, delay);
+    // unless the loop termination flag has been raised
+    if(_stop_loops) 
+        _stop_loops =
+        _animation_in_progress = 0;
+    else {
+        setTimeout(function() {
+            _animation_cycle(index+1, delay);
+        }, delay);
+    }
 }
 
 /******************************************************************************/
@@ -206,13 +216,30 @@ for(var _name in _body = {
 
 // simplified loop prototype
 Array.prototype.loop = function(action) {
-    for(var i = 0, $ = []; i < this.length; i++)
-        $[i] = action(this[i]);
-    return $;
+    if(typeof action === 'function') {
+        for(var i = 0, $ = []; i < this.length; i++)
+            $[i] = action(this[i]);
+        return $;
+    }
 }
 
 // redundant simplified loop prototype
 function loop(from, to, step, action) {
+
+    // of one or less argument is supplied, this repeat the entire function
+    if(typeof to === _undefined) {
+        // call the caller unless a STOP flag has been raised
+        if(_stop_loops)
+            _stop_loops = 
+            _animation_in_progress = 0;
+        else {
+            // raise the "do not redraw" flag
+            _animation_in_progress = 1;
+            // call the caller after a delay
+            setTimeout(arguments.callee.caller, from*1000 || 100);
+        }
+    }
+        
 
     // no 'to' or 'step' implies that the function is to looped 'from' times
     if(typeof to === 'function')
@@ -249,6 +276,16 @@ for(var _name in _body = {
     'negative'  : function(y) { return -y }
 })
     _define(_name, _body[_name]);
+
+// modulus
+function mod(a, b) {
+    return a % b;
+}
+
+// part of the simplified power consutrct: a ^ b ==> Math.pow(a, b)
+Number.prototype._power = function(n) {
+    return Math.pow(this.valueOf(), n);
+}
 
 // returns a "random" number between min and max
 //
@@ -319,20 +356,12 @@ function print(text, color) {
     text += '';
 
     // show text
-    $('_notebook').innerHTML 
+    _notebook.innerHTML 
         += '<div style="color:' +
         (color || _default_color)
         +'">'
         + text.replace(/\s/g, '&nbsp')
         + '</div>';
-}
-
-// call the caller of this function again after a default delay of 0.1 seconds
-function repeat(delay) {
-    // raise the "do not redraw" flag
-    _animation_in_progress = 1;
-    // call the caller
-    setTimeout(arguments.callee.caller, delay*1000 || 100);
 }
 
 // returns time in a neat object
@@ -387,75 +416,15 @@ function _parse(code) {
         // loop(50, { ==> loop(50, function($$$) {
         .replace(/loop\s*\((.*,)\s*{/g, 'loop($1 function($$$){')
         // f(x) = sin(x+1) ==> _define("f", function(x) { return sin(x); });
-        .replace(/(\w+)\s*\(\s*(\w+)\s*\)\s*=\s*(.*)/g, '_define("$1",function($2){return($3)});');
+        .replace(/(\w+)\s*\(\s*(\w+)\s*\)\s*=\s*(.*)/g, '_define("$1",function($2){return($3)});')
+        // 80%(5) ==> 80*(0.01)*5
+        // 80*%(5) ==> 80*(0.01)*5
+        // 80*%(*5) ==> 80*(0.01)*5
+        // 80*%(**5) ==> 80*(0.01)*5
+        .replace(/\s*\**\s*%\s*\**\s*/g, '*(0.01)*')
+        // a ^ b ==> Math.pow(a, b)
+        .replace(/\^\s*([\w\.]+)\s*/g, ' ._power($1)')
+        .replace(/\s*\^\s*/g, ' ._power');
+
 }
 
-/******************************************************************************/
-/*** Bootstrap ****************************************************************/
-/******************************************************************************/
-
-// measure the screen and (re)draw
-function _initialize_image() {
-
-    // clear the screen
-    _canvas_object.width  = width  = window.innerWidth;
-    _canvas_object.height = height = window.innerHeight;
-
-    // do not re-render if animaiton or repeat() is in progress
-    if(_animation_in_progress)
-        return;
-
-    // clear the text screen
-    $('_notebook').innerHTML = '';
-
-    // execute the code
-    main();
-}
-
-// self-explanatory
-window.onload = function() {
-
-    var body = document.getElementsByTagName('body')[0];
-
-    // create canvas element
-    _canvas_object = body.appendChild(
-        document.createElement('canvas')
-    );
-
-    // get the drawing context
-    _canvas = _canvas_object.getContext("2d");
-
-    // set the body margin to zero
-    body.style.margin = 0;
-
-    // create and ID the notebook element
-    var notebook = document.createElement('div');
-    notebook.id = '_notebook';
-    notebook.style.position = 'absolute';
-    notebook.style.top = '0';
-    notebook.style.left = '0';
-    notebook.style.width = '100%';
-    notebook.style.height = '100%';
-    notebook.style.fontFamily = 'courier';
-    notebook.style.overflow = 'scroll';
-
-    body.appendChild(notebook);
-
-    /* parse the script */
-
-    // extract the code and delete the original script element
-    var input = $('owlscript');
-    var code = input.innerHTML;
-    input.parentNode.removeChild(input);
-
-    // create the new script element and parse the code
-    body.appendChild(document.createElement('script')).innerHTML = _parse(code);
-
-    // execute
-    _initialize_image();
-}
-
-// redraw on resize
-window.onresize = function() {
-    _initialize_image();
-}
