@@ -75,7 +75,7 @@
 loop(0, d, 50, x {
     loop(0, d, 50, y {
         disk(
-            x%y, y%x,
+            mod(x,y), mod(y,x),
             10 + random(0,15),
             random('color')
         )
