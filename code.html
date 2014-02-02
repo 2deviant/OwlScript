@@ -6,19 +6,26 @@
         <script type='text/javascript' src='owlscript_in.js'></script>
     </head>
     <body>
-        <canvas id='screen'></canvas>
-        <div id='notebook'></div>
+        <canvas id='screen' class='dim'></canvas>
+        <div id='notebook' class='dim'></div>
         <div id='owl'></div>
-        <textarea id='owlscript'>
-
-// Press ESC to run the code
+        <textarea id='owlscript'>// Press ESC to run the code
 // Press ESC again to edit the code
 
 function main() {
 
+    loop(100, {
+        disk(
+            random(0,width),
+            random(0,height),
+            random(20,50),
+            random('color')
+        )
+    })
+
     radius = min(height, width)/3
 
-    circle(1*width/4, height/2, radius, 'red', 50)
+    circle(  width/4, height/2, radius, 'red', 50)
     circle(2*width/4, height/2, radius, 'green', 50)
     circle(3*width/4, height/2, radius, 'blue', 50)
 
