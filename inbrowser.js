@@ -68,6 +68,9 @@ window.onload = function() {
     // acquire The Owl
     _owl = $('owl');
 
+    // self-explanatory
+    _attach_tab_event();
+
     // check for previous code
     if(localStorage._owlscript)
         _owlscript.value = localStorage._owlscript;
@@ -135,6 +138,33 @@ window.onload = function() {
             }, 200);
         }
     });
+}
+
+// force normal TAB behavior while inside the TEXTAREA
+function _attach_tab_event() {
+
+    _owlscript.addEventListener('keydown', function(e) {
+
+        // TAB = 9
+        if(e.keyCode === 9) {
+
+            // acquire the cursor position
+            var start   = this.selectionStart;
+
+            // text = before cursor + '    ' + after cursor
+            this.value =
+                this.value.substring(0, start)
+                + '    '
+                + this.value.substring( this.selectionEnd);
+
+            // move the cursor after the tab
+            this.selectionStart = this.selectionEnd = start + 4;
+
+            // prevent focus loss by ignoring default TAB event handling
+            e.preventDefault();
+        }
+    });
+
 }
 
 // redraw on resize
