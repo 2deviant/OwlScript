@@ -9,12 +9,16 @@ var _key_processing = 0;
 
 // measure the screen and (re)draw
 function _initialize_image() {
+    
+    // do absolutely nothing if the code editor is visible
+    if(!_owlscript._hidden)
+        return;
 
     // clear the screen
     _canvas_object.width  = width  = window.innerWidth;
     _canvas_object.height = height = window.innerHeight;
 
-    // do not re-render if animaiton or repeat() is in progress
+    // do not re-render if animaiton or loop() is in progress
     if(_animation_in_progress)
         return;
 
@@ -89,7 +93,7 @@ window.onload = function() {
                 // dim the background
                 _notebook.classList.add('dim');
                 _canvas_object.classList.add('dim');
-                // focus on it
+                // focus on the code editing window
                 _owlscript.focus();
                 // stop animation and/or repetition
                 _stop_loops = 1;
@@ -99,12 +103,17 @@ window.onload = function() {
                 // continue animation and/or repetition
                 _stop_loops = 0;
 
+                // the code editor is hidden
+                _owlscript._hidden = 1;
+
                 // parse and run the _owlscript
                 try {
                     _parse_and_run();
                 }
                 // if an error is encountered
                 catch(error) {
+                    // just kidding, code editor is not really hidden
+                    _owlscript._hidden = 0;
                     // prevent any loops from starting
                     _stop_loops = 1;
                     // display it
@@ -112,7 +121,6 @@ window.onload = function() {
                 }
                 if(!_stop_loops) {
                     // hide the controls
-                    _owlscript._hidden = 1;
                     _owlscript.classList.add('hide');
                     _owl.classList.add('hide');
                     // undim the background
