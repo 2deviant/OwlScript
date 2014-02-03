@@ -206,7 +206,7 @@ table tr:first-child td {
     opacity:0;
 }
 
-.dim {
+#screen.dim {
     -webkit-filter: blur(5px) brightness(.75) grayscale(100%);
        -moz-filter: blur(5px) brightness(.75) grayscale(100%);
         -ms-filter: blur(5px) brightness(.75) grayscale(100%);
@@ -216,4 +216,9 @@ table tr:first-child td {
 
 #notebook.dim {
     background:rgba(0,0,0,.25);
+    -webkit-filter: brightness(.75) grayscale(100%);
+       -moz-filter: brightness(.75) grayscale(100%);
+        -ms-filter: brightness(.75) grayscale(100%);
+         -o-filter: brightness(.75) grayscale(100%);
+            filter: brightness(.75) grayscale(100%);
 }
