@@ -371,7 +371,7 @@ function time() {
         hour : date.getHours(),
         minute : date.getMinutes(),
         second : date.getSeconds(),
-        millisecond: date.getMilliseconds()
+        millisecond : date.getMilliseconds()
     };
 }
 
@@ -424,7 +424,7 @@ function _parse(code) {
         .replace(/\s*\**\s*%\s*\**\s*/g, '*(0.01)*')
         // a ^ b ==> Math.pow(a, b)
         .replace(/\^\s*([\w\.]+)\s*/g, ' ._power($1)')
-        .replace(/\s*\^\s*/g, ' ._power');
-
+        .replace(/\s*\^\s*/g, ' ._power')
+        .replace(/function\s+main\s*(\([^()]*\))/, 'main=function$1');
 }
 

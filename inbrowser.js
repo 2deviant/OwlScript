@@ -30,27 +30,6 @@ function _initialize_image() {
 }
 
 // self-explanatory
-function _parse_and_run() {
-
-    var code = $('_code');
-
-    // if the script element already exists, erase it before injecting new code
-    if(code)
-        code.parentNode.removeChild(code);
-
-    // create the script element and inject it with parsed code
-    var script = document.createElement('script');
-    script.id = '_code';
-    script.innerHTML = _parse(_owlscript.value);
-
-    // append the script element to the body
-    document.getElementsByTagName('body')[0].appendChild(script);
-
-    // execute
-    _initialize_image();
-}
-
-// self-explanatory
 window.onload = function() {
 
     // acquire the canvas object
@@ -81,6 +60,9 @@ window.onload = function() {
         // Escape key
         if(e.keyCode === 27 && !_key_processing) {
 
+            // erase the old main()
+            window.main = null;
+
             // prevent duplicate event handling
             _key_processing = 1;
 
@@ -109,9 +91,10 @@ window.onload = function() {
                 // the code editor is hidden
                 _owlscript._hidden = 1;
 
-                // parse and run the _owlscript
+                // attempt to process the code
                 try {
-                    _parse_and_run();
+                    // process the new code
+                    eval(_parse(_owlscript.value));
                 }
                 // if an error is encountered
                 catch(error) {
@@ -120,7 +103,19 @@ window.onload = function() {
                     // prevent any loops from starting
                     _stop_loops = 1;
                     // display it
-                    alert('ERROR: ' + error.message);
+                    alert(error.name + ': ' + error.message);
+                }
+                // attempt to run the code
+                try {
+                    _initialize_image();
+                }
+                catch(error) {
+                    // just kidding, code editor is not really hidden
+                    _owlscript._hidden = 0;
+                    // prevent any loops from starting
+                    _stop_loops = 1;
+                    // display it
+                    alert(error.name + ': ' + error.message);
                 }
                 if(!_stop_loops) {
                     // hide the controls
