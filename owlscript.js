@@ -82,8 +82,9 @@ function circle(x, y, r, color, width) {
     }
 }
 
-// self-explanatory (filled circle)
-function disk(x, y, r, color) {
+// self-explanatory
+disk = 
+fill_circle = function(x, y, r, color) {
     with(_canvas) {
         beginPath();
         fillStyle = color || _default_color;
@@ -103,12 +104,11 @@ function rectangle(x0, y0, x1, y1, color, width) {
     }
 }
 
-// self-explanatory (filled recrangle)
-function sheet(x0, y0, x1, y1, color) {
-    with(_canvas) {
-        fillStyle = color || _default_color;
-        fillRect(x0, y0, x1-x0, y1-y0);
-    }
+// self-explanatory
+sheet = 
+fill_rectangle = function(x0, y0, x1, y1, color) {
+    _canvas.fillStyle = color || _default_color;
+    _canvas.fillRect(x0, y0, x1-x0, y1-y0);
 }
 
 // self-explanatory
@@ -126,6 +126,19 @@ function polygon(x, y, color, width) {
 }
 
 // self-explanatory
+function fill_polygon(x, y, color) {
+    with(_canvas) {
+        beginPath();
+        fillStyle = color || _default_color;
+        moveTo(x[0], y[0]);
+        for(var i = 1; i < x.length; i++)
+            lineTo(x[i], y[i]);
+        closePath();
+        fill();
+    }
+}
+
+// self-explanatory
 function regular_polygon(x, y, r, n, color, width) {
     var angles = range(0, 360*(1-1/n), 360/n);
     polygon(
@@ -135,8 +148,19 @@ function regular_polygon(x, y, r, n, color, width) {
         width);
 }
 
+// self-explanatory
+function fill_regular_polygon(x, y, r, n, color) {
+    var angles = range(0, 360*(1-1/n), 360/n);
+    fill_polygon(
+        sin(angles).multiply( r).add(x),
+        cos(angles).multiply(-r).add(y),
+        color);
+}
+
+
 // erase with the current background color
 function clear_canvas() {
+    _notebook.innerHTML = '';
     sheet(0, 0, width, height, _default_background_color);
 }
 
@@ -293,17 +317,37 @@ Number.prototype._power = function(n) {
 // random number
 //
 // if the first and only argument is an array, return a random element from it
-function random(min, max) {
+_random = random = function(min, max) {
 
     // if the argument is an array
     if(typeof min === _object)
-        // return a random element from it
-        return min[random(0, min.length - 1)];
+        // return a _random element from it
+        return min[_random(0, min.length - 1)];
 
-    // random color special case
-    if(min === 'color') {
+    // _random color special case
+    if(typeof min === 'string') {
         var $ = '0123456789abcdef'.split('');
-        return '#'+random($)+random($)+random($);
+        var A = '9abcdef'.split('');
+        var B = '0123456'.split('');
+
+        // return a color octet
+        var __ = function(array) {
+            return _random(array) + _random($);
+        };
+
+        // various random colors
+        var colors = {
+            'color'  : '__($)+__($)+__($)',
+            'red'    : '__(A)+__(B)+__(B)',
+            'green'  : '__(B)+__(A)+__(B)',
+            'blue'   : '__(B)+__(B)+__(A)',
+            'yellow' : '(_=__(A))+_+__(B)',
+            'violet' : '(_=__(A))+__(B)+_',
+            'teal'   : '__(B)+(_=__(A))+_',
+        };
+
+        // return the color
+        return '#' + eval(colors[min]);
     }
 
     // generate a random number
@@ -425,6 +469,7 @@ function _parse(code) {
         // a ^ b ==> Math.pow(a, b)
         .replace(/\^\s*([\w\.]+)\s*/g, ' ._power($1)')
         .replace(/\s*\^\s*/g, ' ._power')
+        // function main() ==> main = function() quirk
         .replace(/function\s+main\s*(\([^()]*\))/, 'main=function$1');
 }
 
