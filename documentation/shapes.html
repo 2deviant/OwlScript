@@ -2,25 +2,41 @@
 
 function main() {
 
-    // x, y, radius
+    // Any text prefixed with // is known as a "comment"
+    // and is not treated as a part of your code.
+
+    // All coordinates and measurements are in pixels.
+
+    // center x, center y, radius
     circle(100, 100, 40)
 
-    // x, y, radius, color
+    // same as above, but with color
     circle(200, 100, 40, 'red')
 
-    // x, y, radius, color, line thickness
+    // same as above, but thicker
     circle(300, 100, 40, 'red', 20)
 
-    // x, y, radius, fill color
-    disk(400, 100, 40, 'blue');
+    // same as above, but filled in
+    fill_circle(400, 100, 40, 'blue')
 
-    // left,top, right,bottom
-    rectangle(500,100, 600,200, 'green', 20);
+    // A line segment is drawn between two points: (x0, y0) and (x1, y1)
+    // x0,y0, x1,y1, color, line thickness
+    line(200,200, 550,150, 'grey', 5)
 
-    // left,top, right,bottom, fill color
-    sheet(100,200, 200,300, 'orange');
+    // A rectangle is defined by its diagonal:
+    // top left point and bottom right point.
+    // x0,y0, x1,y1, color, line thickness
+    rectangle(500,100, 600,200, 'green', 20)
 
-    // left,top, right,bottom, color, thickness
-    line(200,200, 550,150, 'grey', 5);
+    // same as above, but filled in
+    fill_rectangle(100,200, 200,300, 'orange')
+
+    // center x, center y, radius, number of faces, color, thickness
+    regular_polygon(150,250, 35, 6, 'blue', 10)
+
+    // same as above, but filled in
+    fill_regular_polygon(350,350, 100, 5, 'purple')
+
 }
+
 </a>
