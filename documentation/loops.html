@@ -2,10 +2,10 @@
 
 function main() {
 
-    // loop the variable r from 50 to 250 in steps of 25
-    loop(50, 250, 25, r {
+    // loop the variable r from 25 to 1/2 of the height in steps of 25
+    loop(25, height/2, 25, r {
 
-        // center x, center y, radius r, random color, line width 20
+        // center x, center y, radius r, random color, stroke width 20
         circle(width/2, height/2, r, random('color'), 20)
 
     })  
