@@ -1,5 +1,5 @@
 /*
- * OwlScript v0.12 by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript v0.1-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -264,7 +264,6 @@ function loop(from, to, step, action) {
         }
     }
         
-
     // no 'to' or 'step' implies that the function is to looped 'from' times
     if(typeof to === 'function')
         range(from).loop(to);
@@ -311,12 +310,25 @@ Number.prototype._power = function(n) {
     return Math.pow(this.valueOf(), n);
 }
 
-// returns a "random" number between min and max
-//
-// if either of the arguments is a floating-point number, so is the returned
-// random number
-//
-// if the first and only argument is an array, return a random element from it
+/*
+ * Returns a "random" number between min and max.  If either of the arguments is
+ * a floating-point number, so is the returned random number.
+ *
+ * If the first and only argument is an array, return a random element from it.
+ *
+ * If the first and only argument is a string, return a random color:
+ *
+ *      'color'     : random color
+ *      'red'       : random reddish color
+ *      'green'     :    "      "      "
+ *      'blue'      :    "      "      "
+ *      'yellow'    :    "      "      "
+ *      'teal'      :    "      "      "
+ *      'violet'    :    "      "      "
+ *      'gray'      :    "      "      "
+ *
+ */
+
 _random = random = function(min, max) {
 
     // if the argument is an array
@@ -329,25 +341,24 @@ _random = random = function(min, max) {
         var $ = '0123456789abcdef'.split('');
         var A = '9abcdef'.split('');
         var B = '0123456'.split('');
+        var _;
 
         // return a color octet
-        var __ = function(array) {
-            return _random(array) + _random($);
+        function octet(array) {
+            return _random(array || B) + _random($);
         };
 
         // various random colors
-        var colors = {
-            'color'  : '__($)+__($)+__($)',
-            'red'    : '__(A)+__(B)+__(B)',
-            'green'  : '__(B)+__(A)+__(B)',
-            'blue'   : '__(B)+__(B)+__(A)',
-            'yellow' : '(_=__(A))+_+__(B)',
-            'violet' : '(_=__(A))+__(B)+_',
-            'teal'   : '__(B)+(_=__(A))+_',
-        };
-
-        // return the color
-        return '#' + eval(colors[min]);
+        switch(min) {
+            case 'color'  : return '#'+octet($)+octet($)+octet($);
+            case 'red'    : return '#'+octet(A)+octet()+octet();
+            case 'green'  : return '#'+octet()+octet(A)+octet();
+            case 'blue'   : return '#'+octet()+octet()+octet(A);
+            case 'yellow' : return '#'+(_=octet(A))+_+octet();
+            case 'violet' : return '#'+(_=octet(A))+octet()+_;
+            case 'teal'   : return '#'+octet()+(_=octet(A))+_;
+            case 'gray'   : return '#'+(_=octet($))+_+_;
+        }
     }
 
     // generate a random number
