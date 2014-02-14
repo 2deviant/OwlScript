@@ -1,0 +1,37 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// define a function which takes four arguments
+// and draws a bull's eye pattern
+
+function bulls_eye(x, y, size, color) {
+
+    // loop the variable r from 25 to 'size' in steps of 25
+    loop(25, size, 25, r {
+
+        // x, y, radius r, color, stroke width 20
+        circle(x, y, r, color, 20)
+
+    })  
+
+}
+
+function main() {
+
+    // center bull's eye
+    bulls_eye((1/2)*width, (1/2)*height, height/4, 'red')
+
+    // top left
+    bulls_eye((1/4)*width, (1/4)*height, height/6, 'green')
+
+    // top right
+    bulls_eye((1/4)*width, (3/4)*height, height/6, 'blue')
+
+    // bottom left
+    bulls_eye((3/4)*width, (1/4)*height, height/6, 'pink')
+
+    // bottom right
+    bulls_eye((3/4)*width, (3/4)*height, height/6, 'maroon')
+
+}
+
+</a>
