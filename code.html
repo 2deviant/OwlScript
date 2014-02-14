@@ -13,9 +13,21 @@
     <body>
         <canvas id='screen' class='dim'></canvas>
         <div id='notebook' class='dim'></div>
-        <div id='owl'></div>
-        <textarea id='owlscript'>// Press ESC to run the code
-// Press ESC again to edit the code
+        <div id='owl' class='owl'></div>
+        <div id='file' class='translucent'><input id='filename' value='Untitled'/></div>
+        <div id='code_toolbar' class='translucent'>
+            <div id='new_code' title='New'>&oplus;</div>
+            <div id='list_codes' title="List Codes">&equiv;</div>
+            <div id='clone_code' title="Clone">&#x025FC;</div>
+            <div id='delete_code' title="Delete">&otimes;</div>
+        </div>
+        <div id='owlscript' class='translucent'>
+            <textarea id='code'>// Press ESC to run the code, Press ESC again to edit it.
+
+// Any text prefixed with // is known as a "comment,"
+// and is not treated as a part of your code.
+
+// All coordinates and measurements are in pixels.
 
 function main() {
 
@@ -35,6 +47,7 @@ function main() {
     circle(3*width/4, height/2, radius, 'blue', 50)
 
 }</textarea>
+        </div>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
