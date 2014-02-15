@@ -1,5 +1,5 @@
 /*
- * OwlScript In Browser v0.1-beta by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript In Browser v0.1.2-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -9,7 +9,7 @@
  */
 
 /******************************************************************************/
-/*** Global Variables *********************************************************/
+/*** Variables ****************************************************************/
 /******************************************************************************/
 
 // OwlScript input window
@@ -17,6 +17,9 @@ var _owlscript;
 
 // Owl
 var _owl;
+
+// run vs edit button
+var _lever;
 
 // file name wrapper
 var _file;
@@ -58,7 +61,7 @@ window.onload = function() {
     // self-explanatory
     _check_local_storage();
 
-    // run on ESC
+    // run/edit on ESC
     addEventListener('keydown', function(e) {
 
         // ESC = ASCII 27
@@ -76,6 +79,11 @@ window.onload = function() {
                 }, 300);
             }
     });
+
+    // run/edit on RUN/EDIT button click
+    $('lever').onclick = function() {
+        _attempt_to_run_the_code();
+    }
 }
 
 // redraw on resize
@@ -108,24 +116,29 @@ function _initialize_image() {
 // self-explanatory
 function _attach_toolbar_events() {
 
+    // new code
     $('new_code').onclick = function() {
         _save_current_code();
         _new_code();
     }
 
+    // code list
     $('list_codes').onclick = function() {
         _list_local_codes();
     }
 
+    // clone code
     $('clone_code').onclick = function() {
         _new_code(
             'Clone of ' + _filename.value ,
+            // the body is prepended with a reference to the original code
             '// Clone of ' + _filename.value
             + ' (ID: ' + _localStorage.current_code + ')\n\n'
             + _code.value
         );
     }
 
+    // delete
     $('delete_code').onclick = function() {
 
         // acquire the code ID list
@@ -167,6 +180,9 @@ function _acquire_global_objects() {
 
     // acquire the file name input
     _filename = $('filename');
+
+    // acquire the lever
+    _lever = $('lever');
  
     // acquire the code toolbar   
     _code_toolbar = $('code_toolbar');
@@ -179,11 +195,17 @@ function _acquire_global_objects() {
 // self-explanatory
 function _show_code_editor() {
 
-    // hide the code editor
+    // show the code editor
     _show(_code_toolbar);
     _show(_owlscript);
     _show(_file);
+
+    // show the owl
     _show(_owl);
+
+    // swich the run button to edit
+    _lever._remove_class('run');
+
 
     // dim the background
          _notebook._add_class('dim');
@@ -200,7 +222,12 @@ function _hide_code_editor() {
     _hide(_code_toolbar);
     _hide(_owlscript);
     _hide(_file);
+
+    // hide the owl
     _hide(_owl);
+
+    // swich the edit button to run
+    _lever._add_class('run');
 
     // undim the background
          _notebook._remove_class('dim');
@@ -309,6 +336,9 @@ function _load_code(id) {
 
     // load the code name
     _filename.value = _localStorage['name' + id];
+
+    // self-explanatory
+    _resize_filename_field();
 }
 
 // self-explanatory
@@ -509,22 +539,32 @@ function _attach_filename_resizing_event() {
         // store the name 
         _rename_current_code();
 
-        // create an element with the contents of the input field
-        // for the purpose of measuring it
-        var div = _create_element('div');
-        div.className = 'filename';
-        div.innerHTML = _filename.value.replace(/\s/g, '&nbsp;');
-        document.body._append_child(div);
-        // measure it
-        var size = div.getBoundingClientRect().width;
-        // delete it
-        div.parentNode.removeChild(div);
+        // self-explanatory
+        _resize_filename_field();
 
-        // resize the input field, unless it is larger than half of the code editor
-        if(size < _owlscript.getBoundingClientRect().width/2) {
-            _filename.parentNode.style.width = 
-            _filename.style.width = size + 16 + 'px';
-        }
+    }
+}
+
+// self-explanatory
+function _resize_filename_field() {
+
+    // create an element with the contents of the input field
+    // for the purpose of measuring it
+    var div = _create_element('div');
+    div.className = 'filename';
+    div.innerHTML = _filename.value.replace(/\s/g, '&nbsp;');
+    document.body._append_child(div);
+
+    // measure it
+    var size = div.getBoundingClientRect().width;
+
+    // delete it
+    div.parentNode.removeChild(div);
+
+    // resize the input field, unless it is larger than half of the code editor
+    if(size < _owlscript.getBoundingClientRect().width/2) {
+        _filename.parentNode.style.width = 
+        _filename.style.width = size + 16 + 'px';
     }
 }
 
@@ -623,3 +663,9 @@ Object.prototype._remove_class = function(Class) {
 Object.prototype._append_child = function(child) {
     return this.appendChild(child);
 }
+
+// self-explanatory
+function $(id) {
+    return document.getElementById(id);
+}
+
