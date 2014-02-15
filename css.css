@@ -197,6 +197,7 @@ h2 {
     opacity:1;
 }
 
+/* Code Editor */
 
 .owl:before,
 #header:before {
@@ -319,7 +320,6 @@ h2 {
 
 #owlscript {
     background:#4bb27b;
-    /* box-shadow: -30px 30px 40px #000; */
     position:absolute;
     color:#fff;
     width:75%;
