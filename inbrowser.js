@@ -110,7 +110,7 @@ function _initialize_image() {
     _notebook.innerHTML = '';
 
     // execute the code
-    main();
+    _main();
 }
 
 // self-explanatory
@@ -243,7 +243,7 @@ function _hide_code_editor() {
 function _attempt_to_run_the_code() {
 
     // erase the old main()
-    window.main = null;
+    window._main = null;
 
     // store the code
     _save_current_code();
@@ -266,7 +266,7 @@ function _attempt_to_run_the_code() {
         // attempt to process the code
         try {
             // process the new code
-            eval(_parse(_code.value));
+            eval('_main=function(){'+_parse(_code.value)+'}');
         }
         // if an error is encountered
         catch(error) {
@@ -424,7 +424,7 @@ function _new_code(name, body) {
     // create default name and body and display them
                       _localStorage['created'+n] = (new Date()).toLocaleString();
     _filename.value = _localStorage['name'   +n] = name || 'Untitled '+n;
-    _code.value     = _localStorage['body'   +n] = body || 'function main() {\n\n\n\n\n}';
+    _code.value     = _localStorage['body'   +n] = body || '// OwlScript\n\n';
 
 }
 

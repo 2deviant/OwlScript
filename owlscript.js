@@ -488,8 +488,6 @@ function _parse(code) {
         .replace(/\s*\**\s*%\s*\**\s*/g, '*(0.01)*')
         // a ^ b ==> Math.pow(a, b)
         .replace(/\^\s*([\w\.]+)\s*/g, ' ._power($1)')
-        .replace(/\s*\^\s*/g, ' ._power')
-        // function main() ==> main = function() quirk
-        .replace(/function\s+main\s*(\([^()]*\))/, 'main=function$1');
+        .replace(/\s*\^\s*/g, ' ._power');
 }
 

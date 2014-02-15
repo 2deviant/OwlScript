@@ -30,7 +30,7 @@ function _initialize_image() {
     _notebook.innerHTML = '';
 
     // execute the code
-    main();
+    _main();
 }
 
 // self-explanatory
@@ -66,7 +66,7 @@ window.onload = function() {
 
     // create the new script element and parse the code
     document.body.appendChild(document.createElement('script')).innerHTML =
-        _parse(code);
+        'function _main(){'+_parse(code)+'}';
 
     // execute
     _initialize_image();
