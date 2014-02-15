@@ -1,5 +1,5 @@
 /*
- * OwlScript v0.1-beta by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript v0.1.2-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -9,7 +9,7 @@
  */
 
 /******************************************************************************/
-/*** Drawing ******************************************************************/
+/*** Variables ****************************************************************/
 /******************************************************************************/
 
 // canvas object
@@ -18,7 +18,7 @@ var _canvas_object;
 // canvas itself
 var _canvas;
 
-// notebook object
+// notebook object, created in standalone.js
 var _notebook;
 
 // default drawing parameters
@@ -40,6 +40,10 @@ var _frames = [];
 // flags
 var _animation_in_progress = 0;
 var _stop_loops = 0;
+
+/******************************************************************************/
+/*** Drawing ******************************************************************/
+/******************************************************************************/
 
 // self-explanatory
 function set_default_color(color) {
@@ -222,23 +226,27 @@ function _animation_cycle(index, delay) {
 
 /*** Array Operations *********************************************************/
 
-for(var _name in _body = {
-    'add'       : function(a, b) { return a+b },
-    'subtract'  : function(a, b) { return a-b },
-    'multiply'  : function(a, b) { return a*b },
-    'divide'    : function(a, b) { return a/b },
-    'negative'  : function(a)    { return -a },
-    'minus'     : function(a)    { return -a }
-})
-    Array.prototype[_name] = (function(action) {
-        return function(x) {
-            for(var i = this.length, $ = []; i-->0;)
-                $[i] = action(this[i], typeof x === _object ? x[i % x.length] : x);
-            return $;
-        }
-    })(_body[_name]);
+(function() {
+    var body;
+    for(var name in body = {
+        'add'       : function(a, b) { return a+b },
+        'subtract'  : function(a, b) { return a-b },
+        'multiply'  : function(a, b) { return a*b },
+        'divide'    : function(a, b) { return a/b },
+        'negative'  : function(a)    { return -a },
+        'minus'     : function(a)    { return -a }
+    })
+        Array.prototype[name] = (function(action) {
+            return function(x) {
+                for(var i = this.length, $ = []; i-->0;)
+                    $[i] = action(this[i], typeof x === _object ? x[i % x.length] : x);
+                return $;
+            }
+        })(body[name]);
+})();
 
-// simplified loop prototype
+
+// redundant simplified loop prototype
 Array.prototype.loop = function(action) {
     if(typeof action === 'function') {
         for(var i = 0, $ = []; i < this.length; i++)
@@ -247,7 +255,7 @@ Array.prototype.loop = function(action) {
     }
 }
 
-// redundant simplified loop prototype
+// simplified loop construct
 function loop(from, to, step, action) {
 
     // of one or less argument is supplied, this repeat the entire function
@@ -287,18 +295,21 @@ function _define(name, action) {
         };
 }
 
-for(var _name in _body = {
-    'abs'       : function(y) { return Math.abs(y) },
-    'sin'       : function(y) { return Math.sin(y*_tau/360) },
-    'cos'       : function(y) { return Math.cos(y*_tau/360) },
-    'round'     : function(y) { return Math.round(y) },
-    'sign'      : function(y) { return y < 0 ? -1 : 1 },
-    'sqrt'      : function(y) { return Math.sqrt(y) },
-    'sq'        : function(y) { return y*y },
-    'minus'     : function(y) { return -y },
-    'negative'  : function(y) { return -y }
-})
-    _define(_name, _body[_name]);
+(function() {
+    var body;
+    for(var name in body = {
+        'abs'       : function(y) { return Math.abs(y) },
+        'sin'       : function(y) { return Math.sin(y*_tau/360) },
+        'cos'       : function(y) { return Math.cos(y*_tau/360) },
+        'round'     : function(y) { return Math.round(y) },
+        'sign'      : function(y) { return y < 0 ? -1 : 1 },
+        'sqrt'      : function(y) { return Math.sqrt(y) },
+        'sq'        : function(y) { return y*y },
+        'minus'     : function(y) { return -y },
+        'negative'  : function(y) { return -y }
+    })
+        _define(name, body[name]);
+})();
 
 // modulus
 function mod(a, b) {
@@ -407,7 +418,7 @@ function set_title(title) {
 // print text
 function print(text, color) {
 
-    // convert to text
+    // convert to string
     text += '';
 
     // show text
@@ -430,6 +441,7 @@ function time() {
     };
 }
 
+// returns an array from a to b in step increments
 function range(a, b, step) {
 
     // if b is missing, assume the range is from 1 to a
@@ -454,18 +466,15 @@ function range(a, b, step) {
     return r;
 }
 
-// self-explanatory
-function $(id) {
-    return document.getElementById(id);
-}
-
 /******************************************************************************/
 /*** Parser *******************************************************************/
 /******************************************************************************/
 
 function _parse(code) {
+
+    return code
         // x { ==> function(x) {
-    return code.replace(/(\w+)\s*{/g, 'function($1){')
+        .replace(/(\w+)\s*{/g, 'function($1){')
         // , , ==> , 0 ,   or   ( , ==> ( 0 ,
         .replace(/([(,])\s*,/g, '$1 0,')
         // loop(50, { ==> loop(50, function($$$) {
