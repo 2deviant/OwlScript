@@ -183,13 +183,20 @@ h2 {
     cursor:pointer;
     transition: opacity .25s;
     opacity:.9;
+    padding:.125em .5em;
 }
 
 #view_code_close:before {
-    padding:1em;
+    font-size:150%;
     content:'\0d7';
-    line-height:150%;
+    opacity:.5;
+    transition: opacity .25s;
 }
+
+#view_code_close:hover:before {
+    opacity:1;
+}
+
 
 .owl:before,
 #header:before {
