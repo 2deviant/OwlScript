@@ -24,26 +24,20 @@
         </div>
         <div id='owlscript' class='translucent'>
             <textarea id='code'>// Press ESC to run the code, Press ESC again to edit it.
-
-// Any text prefixed with // is known as a "comment,"
-// and is not treated as a part of your code.
-
+// Any line prefixed with // is a "comment," and is ignored.
 // All coordinates and measurements are in pixels.
 
-loop(100, {
-    disk(
-        random(0,width),
-        random(0,height),
-        random(20,50),
-        random('color')
-    )
-})
 
-radius = min(height, width)/3
+// radius of the circles is one third of either the
+// width of the screen or the height, whichever is smaller
+r = min(height, width)/3
 
-circle(  width/4, height/2, radius, 'red', 50)
-circle(2*width/4, height/2, radius, 'green', 50)
-circle(3*width/4, height/2, radius, 'blue', 50)
+// draw three circles
+
+// x, y, radius, color, thickness
+circle((1/4)*width, (1/2)*height, r, 'red', 50)
+circle((2/4)*width, (1/2)*height, r, 'green', 50)
+circle((3/4)*width, (1/2)*height, r, 'blue', 50)
 </textarea>
         </div>
         <script>
