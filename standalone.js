@@ -1,3 +1,20 @@
+
+/*
+ * OwlScript Standalone v0.1.2-beta by Val Tenyotkin (val@tenyotk.in)
+ *
+ * Variables and properties prefixed with an underscore, though global, are
+ * internal and can be minified.  Global minification to common variable names
+ * such as a, b, c, etc. is not adviseable.  Convention of this file is to use
+ * a less common sequence _1, _2, _3, etc.
+ *
+ */
+
+
+// self-explanatory
+function $(id) {
+    return document.getElementById(id);
+}
+
 // measure the screen and (re)draw
 function _initialize_image() {
 
@@ -19,10 +36,8 @@ function _initialize_image() {
 // self-explanatory
 window.onload = function() {
 
-    var body = document.getElementsByTagName('body')[0];
-
     // create canvas element
-    _canvas_object = body.appendChild(
+    _canvas_object = document.body.appendChild(
         document.createElement('canvas')
     );
 
@@ -30,29 +45,28 @@ window.onload = function() {
     _canvas = _canvas_object.getContext("2d");
 
     // set the body margin to zero
-    body.style.margin = 0;
+    document.body.style.margin = 0;
 
     // create and ID the notebook element
     _notebook = document.createElement('div');
-    _notebook.style.position = 'absolute';
-    _notebook.style.top = '0';
-    _notebook.style.left = '0';
-    _notebook.style.width = '100%';
-    _notebook.style.height = '100%';
-    _notebook.style.fontFamily = 'courier';
-    _notebook.style.overflow = 'scroll';
+    with(_notebook) {
+        style.top = '0';
+        style.left = '0';
+        style.width = '100%';
+        style.height = '100%';
+        style.overflow = 'scroll';
+        style.position = 'absolute';
+        style.fontFamily = 'courier';
+    }
+    document.body.appendChild(_notebook);
 
-    body.appendChild(_notebook);
-
-    /* parse the script */
-
-    // extract the code and delete the original script element
+    // extract the code and delete its container
     var input = $('owlscript');
-    var code = input.innerHTML;
-    input.parentNode.removeChild(input);
+    var code = input.parentNode.removeChild(input).innerHTML;
 
     // create the new script element and parse the code
-    body.appendChild(document.createElement('script')).innerHTML = _parse(code);
+    document.body.appendChild(document.createElement('script')).innerHTML =
+        _parse(code);
 
     // execute
     _initialize_image();
