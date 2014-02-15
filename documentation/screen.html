@@ -1,16 +1,12 @@
 <script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
 
-function main() {
+// The flag of France is three vertical stripes of equal width.
 
-    // The flag of France is three vertical stripes of equal width.
+// Blue stripe runs from the left edge to 1/3 of the screen.
+// White stripe runs from 1/3 of the screen to 2/3 of the screen.
+// Red stripe runs from 2/3 of the screen to the end of the screen.
 
-    // Blue stripe runs from the left edge to 1/3 of the screen.
-    // White stripe runs from 1/3 of the screen to 2/3 of the screen.
-    // Red stripe runs from 2/3 of the screen to the end of the screen.
-
-    fill_rectangle(0,           0, (1/3)*width, height, 'blue')
-    fill_rectangle((1/3)*width, 0, (2/3)*width, height, 'white')
-    fill_rectangle((2/3)*width, 0,       width, height, 'red')
-
-}
+fill_rectangle(0,           0, (1/3)*width, height, 'blue')
+fill_rectangle((1/3)*width, 0, (2/3)*width, height, 'white')
+fill_rectangle((2/3)*width, 0,       width, height, 'red')
 </a>

@@ -30,24 +30,21 @@
 
 // All coordinates and measurements are in pixels.
 
-function main() {
+loop(100, {
+    disk(
+        random(0,width),
+        random(0,height),
+        random(20,50),
+        random('color')
+    )
+})
 
-    loop(100, {
-        disk(
-            random(0,width),
-            random(0,height),
-            random(20,50),
-            random('color')
-        )
-    })
+radius = min(height, width)/3
 
-    radius = min(height, width)/3
-
-    circle(  width/4, height/2, radius, 'red', 50)
-    circle(2*width/4, height/2, radius, 'green', 50)
-    circle(3*width/4, height/2, radius, 'blue', 50)
-
-}</textarea>
+circle(  width/4, height/2, radius, 'red', 50)
+circle(2*width/4, height/2, radius, 'green', 50)
+circle(3*width/4, height/2, radius, 'blue', 50)
+</textarea>
         </div>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

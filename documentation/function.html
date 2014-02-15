@@ -15,23 +15,19 @@ function bulls_eye(x, y, size, color) {
 
 }
 
-function main() {
+// center bull's eye
+bulls_eye((1/2)*width, (1/2)*height, height/4, 'red')
 
-    // center bull's eye
-    bulls_eye((1/2)*width, (1/2)*height, height/4, 'red')
+// top left
+bulls_eye((1/4)*width, (1/4)*height, height/6, 'green')
 
-    // top left
-    bulls_eye((1/4)*width, (1/4)*height, height/6, 'green')
+// top right
+bulls_eye((1/4)*width, (3/4)*height, height/6, 'blue')
 
-    // top right
-    bulls_eye((1/4)*width, (3/4)*height, height/6, 'blue')
+// bottom left
+bulls_eye((3/4)*width, (1/4)*height, height/6, 'pink')
 
-    // bottom left
-    bulls_eye((3/4)*width, (1/4)*height, height/6, 'pink')
-
-    // bottom right
-    bulls_eye((3/4)*width, (3/4)*height, height/6, 'maroon')
-
-}
+// bottom right
+bulls_eye((3/4)*width, (3/4)*height, height/6, 'maroon')
 
 </a>

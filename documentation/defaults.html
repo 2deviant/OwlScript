@@ -1,32 +1,29 @@
 <script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
 
-function main() {
+// background color
+set_default_background_color('black')
 
-    // background color
-    set_default_background_color('black')
+// default drawing color
+set_default_color('lime')
 
-    // default drawing color
-    set_default_color('lime')
+// default drawing line thickness, in pixels
+set_default_line_width(3)
 
-    // default drawing line thickness, in pixels
-    set_default_line_width(3)
+// diagonal lines
+// from (x0, y0) to (x1, y1)
+line(0,0, width,height)
+line(width,0, 0,height)
 
-    // diagonal lines
-    // from (x0, y0) to (x1, y1)
-    line(0,0, width,height)
-    line(width,0, 0,height)
+// vertical and horizontal lines
+line(0,height/2, width,height/2)
+line(width/2,0, width/2,height)
 
-    // vertical and horizontal lines
-    line(0,height/2, width,height/2)
-    line(width/2,0, width/2,height)
+// the radius of the disk is 1/4 of the smallest dimension
+// x, y, radius, color
+r = min(width, height)/4
+disk(width/2, height/2, r, 'red')
 
-    // the radius of the disk is 1/4 of the smallest dimension
-    // x, y, radius, color
-    r = min(width, height)/4
-    disk(width/2, height/2, r, 'red')
+// print some stuff
+print("   Resize the window to see what happens!", 'cyan')
 
-    // print some stuff
-    print("   Resize the window to see what happens!", 'cyan')
-
-}
 </a>

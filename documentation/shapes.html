@@ -1,42 +1,37 @@
 <script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
 
-function main() {
+// Any text prefixed with // is known as a "comment"
+// and is not treated as a part of your code.
 
-    // Any text prefixed with // is known as a "comment"
-    // and is not treated as a part of your code.
+// All coordinates and measurements are in pixels.
 
-    // All coordinates and measurements are in pixels.
+// center x, center y, radius
+circle(100, 100, 40)
 
-    // center x, center y, radius
-    circle(100, 100, 40)
+// same as above, but with color
+circle(200, 100, 40, 'red')
 
-    // same as above, but with color
-    circle(200, 100, 40, 'red')
+// same as above, but thicker
+circle(300, 100, 40, 'red', 20)
 
-    // same as above, but thicker
-    circle(300, 100, 40, 'red', 20)
+// same as above, but filled in
+fill_circle(400, 100, 40, 'blue')
 
-    // same as above, but filled in
-    fill_circle(400, 100, 40, 'blue')
+// A line segment is drawn between two points: (x0, y0) and (x1, y1)
+// x0,y0, x1,y1, color, line thickness
+line(200,200, 550,150, 'grey', 5)
 
-    // A line segment is drawn between two points: (x0, y0) and (x1, y1)
-    // x0,y0, x1,y1, color, line thickness
-    line(200,200, 550,150, 'grey', 5)
+// A rectangle is defined by its diagonal:
+// top left point and bottom right point.
+// x0,y0, x1,y1, color, line thickness
+rectangle(500,100, 600,200, 'green', 20)
 
-    // A rectangle is defined by its diagonal:
-    // top left point and bottom right point.
-    // x0,y0, x1,y1, color, line thickness
-    rectangle(500,100, 600,200, 'green', 20)
+// same as above, but filled in
+fill_rectangle(100,200, 200,300, 'orange')
 
-    // same as above, but filled in
-    fill_rectangle(100,200, 200,300, 'orange')
+// center x, center y, radius, number of faces, color, thickness
+regular_polygon(150,250, 35, 6, 'blue', 10)
 
-    // center x, center y, radius, number of faces, color, thickness
-    regular_polygon(150,250, 35, 6, 'blue', 10)
-
-    // same as above, but filled in
-    fill_regular_polygon(350,350, 100, 5, 'purple')
-
-}
-
+// same as above, but filled in
+fill_regular_polygon(350,350, 100, 5, 'purple')
 </a>

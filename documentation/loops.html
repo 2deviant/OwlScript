@@ -1,14 +1,11 @@
 <script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
 
-function main() {
+// loop the variable r from 25 to 1/2 of the height in steps of 25
+loop(25, height/2, 25, r {
 
-    // loop the variable r from 25 to 1/2 of the height in steps of 25
-    loop(25, height/2, 25, r {
+    // center x, center y, radius r, random color, stroke width 20
+    circle(width/2, height/2, r, random('color'), 20)
 
-        // center x, center y, radius r, random color, stroke width 20
-        circle(width/2, height/2, r, random('color'), 20)
-
-    })  
-}
+})  
 
 </a>

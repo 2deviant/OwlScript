@@ -4,22 +4,17 @@
 f(x) = sq(x) + sqrt(x)
 g(x) = 1/(sq(x-1) + 1)
 
-function main() {
+// get an array of floating-point numbers form -1 to 1 in steps of 0.1
+x = range(-3, 3, 0.1)
 
-    // get an array of floating-point numbers form -1 to 1 in steps of 0.1
-    x = range(-3, 3, 0.1)
+// compute f(g(x)), all OwlScript single-variable functions accept values as
+// well as arrays as an argument
+y = f(g(x))
 
-    // compute f(g(x)), all OwlScript single-variable functions accept values as
-    // well as arrays as an argument
-    y = f(g(x))
+// find the maximum
+m = max(y);
 
-    // find the maximum
-    m = max(y);
-
-    // print the maximum
-    print('Maximum of f(g(x)) = ' + m);
-
-}
-
+// print the maximum
+print('Maximum of f(g(x)) = ' + m);
 
 </a>
