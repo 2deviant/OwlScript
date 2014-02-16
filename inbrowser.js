@@ -109,6 +109,9 @@ function _initialize_image() {
     // clear the text screen
     _notebook.innerHTML = '';
 
+    // self-explanatory
+    _initialize_defaults();
+
     // execute the code
     _main();
 }
@@ -266,7 +269,7 @@ function _attempt_to_run_the_code() {
         // attempt to process the code
         try {
             // process the new code
-            eval('_main=function(){'+_parse(_code.value)+'}');
+            eval('_main=function(){'+_parse(_code.value)+'\n}');
         }
         // if an error is encountered
         catch(error) {
@@ -425,6 +428,9 @@ function _new_code(name, body) {
                       _localStorage['created'+n] = (new Date()).toLocaleString();
     _filename.value = _localStorage['name'   +n] = name || 'Untitled '+n;
     _code.value     = _localStorage['body'   +n] = body || '// OwlScript\n\n';
+
+    // self-explanatory
+    _resize_filename_field();
 
 }
 

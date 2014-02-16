@@ -22,9 +22,9 @@ var _canvas;
 var _notebook;
 
 // default drawing parameters
-var _default_color              = '#000';
-var _default_background_color   = '#fff';
-var _default_line_width         = 1;
+var _default_color;
+var _default_background_color;
+var _default_line_width;
 
 // some recurring constants (for minification)
 var _tau        = 2*Math.PI;
@@ -46,6 +46,13 @@ var _stop_loops = 0;
 /******************************************************************************/
 
 // self-explanatory
+function _initialize_defaults() {
+    _default_color      = '#000';
+    _default_line_width = 1;
+    _set_default_background_color('#fff');
+}
+
+// self-explanatory
 function set_default_color(color) {
     _default_color = color;
 }
@@ -56,7 +63,8 @@ function set_default_line_width(width) {
 }
 
 // self-explanatory
-function set_default_background_color(color) {
+_set_default_background_color =
+ set_default_background_color = function(color) {
     // store the color in the current canvas object
     _default_background_color =
     // change the style of the canvas
@@ -165,7 +173,7 @@ function fill_regular_polygon(x, y, r, n, color) {
 // erase with the current background color
 function clear_canvas() {
     _notebook.innerHTML = '';
-    sheet(0, 0, width, height, _default_background_color);
+    fill_rectangle(0, 0, width, height, _default_background_color);
 }
 
 /******************************************************************************/
@@ -357,7 +365,7 @@ _random = random = function(min, max) {
         // return a color octet
         function octet(array) {
             return _random(array || B) + _random($);
-        };
+        }
 
         // various random colors
         switch(min) {

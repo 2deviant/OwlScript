@@ -29,6 +29,9 @@ function _initialize_image() {
     // clear the text screen
     _notebook.innerHTML = '';
 
+    // self-explanatory
+    _initialize_defaults();
+
     // execute the code
     _main();
 }
@@ -66,7 +69,7 @@ window.onload = function() {
 
     // create the new script element and parse the code
     document.body.appendChild(document.createElement('script')).innerHTML =
-        'function _main(){'+_parse(code)+'}';
+        'function _main(){'+_parse(code)+'\n}';
 
     // execute
     _initialize_image();
