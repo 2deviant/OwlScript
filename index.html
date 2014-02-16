@@ -45,7 +45,7 @@
                 <h2>Color</h2>
                 <div>
                     <img src='img/disk.png' alt=''/>
-                    <pre><span>disk</span>(width/2, height/2, 50, <span>'green'</span>)</pre>
+                    <pre><span>fill_circle</span>(width/2, height/2, 50, <span>'green'</span>)</pre>
                 </div>
                 Common color names are recognized.
             </div>
@@ -57,7 +57,7 @@
                     <img src='img/disks.png' alt=''/>
                 </div>
                     <pre>loop(100, {
-    disk(
+    fill_circle(
         random(0, width),
         random(0, height),
         random(10, 50),
@@ -71,16 +71,15 @@
                 <div>
                     <img src='img/modern.png' alt=''/>
                 </div>
-                <pre>d = 2*max(width, height);
+                <pre>step = min(width, height)/10;
 
-loop(0, d, 50, x {
-    loop(0, d, 50, y {
-        disk(
-            mod(x,y), mod(y,x),
-            10 + random(0,15),
-            random('color')
-        )
-    })
+loop(100, {
+    fill_circle(
+        random(1, 9)*step,
+        random(1, 9)*step,
+        random(5, step/2),
+        random('color')
+    )
 })</pre>
                 Modern art with a few lines of code.
             </div>
