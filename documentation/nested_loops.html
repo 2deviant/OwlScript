@@ -1,0 +1,21 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// step is one twenty-fifth of the smallest dimension of the screen,
+// rounded to the nearest integer
+
+step = round(min(width, height)/25)
+
+// outer loop iterates x from 0 to the width of the screen
+loop(0, width, step, x {
+
+    // inner loop iterates y from 0 to the height of the screen
+    loop(0, height, step, y {
+
+        // draw a rectangle and fill it a random shade of gray
+        fill_rectangle(x, y, x+step, y+step, random('gray'))
+
+    })
+
+})
+
+</a>

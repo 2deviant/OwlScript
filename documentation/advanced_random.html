@@ -1,0 +1,34 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// smallest dimension of the screen upon which all other measurements are based
+min_dim = min(width, height)
+
+// thickness of the rim is one fiftieth of the smallest dimension
+rim = 1 + round(min_dim/50)
+
+// maximum radius is one tenth of the smallest dimension
+max_radius = round(min_dim/10)
+
+// draw 100 circles
+loop(100, {
+
+    // random radius between 10 to max_radius pixels
+    r = random(10, max_radius)
+
+    // random x coordinate from r+rim to width-r-rim
+    // ensures no circle is drawn off the screen
+    x = random(r + rim, width - r - rim)
+
+    // random y coordinate from r+rim to height-r-rim
+    // ensures no circle is drawn off the screen
+    y = random(r + rim, height - r - rim)
+
+    // black rim
+    circle(x, y, r, 'black', rim)
+
+    // colored circle
+    fill_circle(x, y, r, random('color'))
+
+})
+
+</a>

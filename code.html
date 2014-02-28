@@ -1,45 +1,49 @@
 <!DOCTYPE html>
     <head>
         <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
-        <title>OwlScript v0.1.2-beta</title>
+        <title>OwlScript</title>
         <link href='css.css' rel='stylesheet'/>
-        <script type='text/javascript' src='owlscript_in.js'></script>
         <style type='text/css'>
             body {
                 overflow:hidden;
             }
         </style>
+        <script type='text/javascript' src='owlscript_in.js'></script>
     </head>
     <body>
         <canvas id='screen' class='dim'></canvas>
         <div id='notebook' class='dim'></div>
         <div id='owl' class='owl'></div>
-        <div id='lever'><div><span>run</span><span>edit</span></div></div>
-        <div id='file' class='translucent'><input id='filename' value='Untitled'/></div>
-        <div id='code_toolbar' class='translucent'>
-            <div id='new_code' title='New'>&oplus;</div>
-            <div id='list_codes' title="List Codes">&equiv;</div>
-            <div id='clone_code' title="Clone">&#x025FC;</div>
-            <div id='delete_code' title="Delete">&otimes;</div>
-        </div>
-        <div id='owlscript' class='translucent'>
-            <textarea id='code'>// Press ESC to run the code, Press ESC again to edit it.
+        <div id='code_editor' class='translucent'>
+            <div id='file'><input id='filename' value='Untitled'/></div>
+            <div id='owlscript'>
+                <textarea id='code'>// Press ESC to run the code, Press ESC again to edit it.
 // Any line prefixed with // is a "comment," and is ignored.
 // All coordinates and measurements are in pixels.
 
 
-// radius of the circles is one third of either the
-// width of the screen or the height, whichever is smaller
-r = min(height, width)/3
+// Draw 100 random circles.
 
-// draw three circles
+loop(100, {
 
-// x, y, radius, color, thickness
-circle((1/4)*width, (1/2)*height, r, 'red', 50)
-circle((2/4)*width, (1/2)*height, r, 'green', 50)
-circle((3/4)*width, (1/2)*height, r, 'blue', 50)
-</textarea>
+    fill_circle(
+        random(0, width),    // random x coordinate from 0 to width
+        random(0, height),   // random y coordinate from 0 to height
+        random(10, 50),      // random radius from 10 to 50 pixels
+        random('gray')       // random shade of gray
+    )
+
+})</textarea>
+            </div><div id='code_toolbar'>
+                <div id='new_code' title='New'></div>
+                <div id='list_codes' title="List Codes"></div>
+                <div id='clone_code' title="Clone"></div>
+                <div id='delete_code' title="Delete"></div>
+                <div id='separator'></div>
+                <div id='home' title="Home"></div>
+            </div>
         </div>
+        <div id='lever'><div><span>run</span><span>edit</span></div></div>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -50,4 +54,3 @@ circle((3/4)*width, (1/2)*height, r, 'blue', 50)
         </script>
     </body>
 </html>
-
