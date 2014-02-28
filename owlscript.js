@@ -1,5 +1,5 @@
 /*
- * OwlScript v0.1.2-beta by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript v0.1.4-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -35,11 +35,16 @@ var _undefined  = 'undefined';
 var width, height;
 
 // animation frames
-var _frames = [];
+var _frames;
 
 // flags
 var _animation_in_progress = 0;
 var _stop_loops = 0;
+var _loop_in_progress;
+
+// seeding SimpleRNG variables
+var _SimpleRNG_U = 0xdead * (new Date().getMilliseconds() * new Date().getSeconds() + 1);
+var _SimpleRNG_V = 0xbeef * (new Date().getMilliseconds() * new Date().getMinutes() + 1);
 
 /******************************************************************************/
 /*** Drawing ******************************************************************/
@@ -47,8 +52,11 @@ var _stop_loops = 0;
 
 // self-explanatory
 function _initialize_defaults() {
-    _default_color      = '#000';
-    _default_line_width = 1;
+    _default_color          = '#000';
+    _default_line_width     = 1;
+    _loop_in_progress       = 0;
+    _frames                 = [];
+
     _set_default_background_color('#fff');
 }
 
@@ -169,7 +177,6 @@ function fill_regular_polygon(x, y, r, n, color) {
         color);
 }
 
-
 // erase with the current background color
 function clear_canvas() {
     _notebook.innerHTML = '';
@@ -203,11 +210,15 @@ function new_frame() {
 // start the animation
 function animate(delay) {
 
-    // raise the animation flag
-    _animation_in_progress = 1;
+    // prevent multiple loops, animations, and combinations thereof
+    if(!_animation_in_progress && !_loop_in_progress) {
 
-    // initiate the animation cycle at a default rate of 10 fps
-    _animation_cycle(0, delay*1000 || 100);
+        // raise the animation flag
+        _animation_in_progress = 1;
+
+        // initiate the animation cycle at a default rate of 10 fps
+        _animation_cycle(0, delay*1000 || 100);
+    }
 }
 
 // animation cycle handler
@@ -263,26 +274,42 @@ Array.prototype.loop = function(action) {
     }
 }
 
+// loop() processor
+function _keep_looping(action, delay) {
+
+    // if the stop is signaled, stop
+    if(_stop_loops)
+        _stop_loops = 
+        _animation_in_progress = 0;
+    // else keep looping
+    else
+        setTimeout(function() {
+            action();
+            _keep_looping(action, delay);
+        }, delay);
+}
+
 // simplified loop construct
-function loop(from, to, step, action) {
+loop = repeat = function(from, to, step, action) {
 
     // of one or less argument is supplied, this repeat the entire function
     if(typeof to === _undefined) {
-        // call the caller unless a STOP flag has been raised
-        if(_stop_loops)
-            _stop_loops = 
-            _animation_in_progress = 0;
-        else {
+        // prevent multiple loop() and/or animation calls, a.k.a. fork bombs
+        if(!_loop_in_progress && !_animation_in_progress) {
             // raise the "do not redraw" flag
             _animation_in_progress = 1;
-            // call the caller after a delay
-            setTimeout(arguments.callee.caller, from*1000 || 100);
+            // don't fork bomb me, bro!
+            _loop_in_progress = 1;
+            // initiate the regular calls of the caller
+            _keep_looping(arguments.callee.caller, from*1000 || 100);
         }
+        return;
     }
         
     // no 'to' or 'step' implies that the function is to looped 'from' times
     if(typeof to === 'function')
-        range(from).loop(to);
+        for(var i = from; i-->0;)
+            to();
     else
         range(from, to, step).loop(action);
 }
@@ -357,34 +384,45 @@ _random = random = function(min, max) {
 
     // _random color special case
     if(typeof min === 'string') {
-        var $ = '0123456789abcdef'.split('');
-        var A = '9abcdef'.split('');
-        var B = '0123456'.split('');
-        var _;
 
         // return a color octet
-        function octet(array) {
-            return _random(array || B) + _random($);
+        // type =   : low color
+        //        1 : high color
+        //        2 : any color
+        function octet(type) {
+            var rnd =
+                _random(
+                    type == 1 ? 155 : 0,
+                    type == 2 ? 255 : 100
+                );
+            return (rnd < 16 ? '0' : '') + rnd.toString(16);
         }
+
+        var high = octet(1);
 
         // various random colors
         switch(min) {
-            case 'color'  : return '#'+octet($)+octet($)+octet($);
-            case 'red'    : return '#'+octet(A)+octet()+octet();
-            case 'green'  : return '#'+octet()+octet(A)+octet();
-            case 'blue'   : return '#'+octet()+octet()+octet(A);
-            case 'yellow' : return '#'+(_=octet(A))+_+octet();
-            case 'violet' : return '#'+(_=octet(A))+octet()+_;
-            case 'teal'   : return '#'+octet()+(_=octet(A))+_;
-            case 'gray'   : return '#'+(_=octet($))+_+_;
+            case 'color'  : return '#'+octet(2)+octet(2)+octet(2);
+            case 'red'    : return '#'+high+octet()+octet();
+            case 'green'  : return '#'+octet()+high+octet();
+            case 'blue'   : return '#'+octet()+octet()+high;
+            case 'yellow' : return '#'+high+high+octet();
+            case 'violet' : return '#'+high+octet()+high;
+            case 'teal'   : return '#'+octet()+high+high;
+            case 'gray'   : return '#'+(high=octet(2))+high+high;
         }
     }
 
-    // generate a random number
-    var rnd = min + Math.random()*(max - min);
+    // SimpleRNG
+    _SimpleRNG_U = 36969 * ((_SimpleRNG_U & 65535) >>> 0) + (_SimpleRNG_U >>> 16);
+    _SimpleRNG_V = 18000 * ((_SimpleRNG_V & 65535) >>> 0) + (_SimpleRNG_V >>> 16);
+    var rnd = ((((_SimpleRNG_U << 16) >>> 0) + _SimpleRNG_V) & 0xffffffff) >>> 0;
 
-    // round it if both arguments are integers
-    return min % 1 === 0 && max % 1 === 0 ? Math.round(rnd) : rnd;
+    // if the arguments are integers, return an integer
+    // otherwise return a floating-point number
+    return min % 1 == 0 && max % 1 == 0 ?
+        min + rnd % (max - min + 1) :
+        min + rnd * (max - min)/4294967297;     // 2^32 + 1
 }
 
 // objectify x
@@ -485,8 +523,12 @@ function _parse(code) {
         .replace(/(\w+)\s*{/g, 'function($1){')
         // , , ==> , 0 ,   or   ( , ==> ( 0 ,
         .replace(/([(,])\s*,/g, '$1 0,')
-        // loop(50, { ==> loop(50, function($$$) {
-        .replace(/loop\s*\((.*,)\s*{/g, 'loop($1 function($$$){')
+        // loop(50, { ==> loop(50, function(___) {
+        .replace(/loop\s*\((.*),\s*{/gi, 'loop($1, function(___){')
+        // loop 50 ==> loop(50, function(___) {
+        .replace(/loop\s+(\w+)/gi, 'loop($1,function(___){')
+        // end loop ==> })
+        .replace(/end/gi, '})')
         // f(x) = sin(x+1) ==> _define("f", function(x) { return sin(x); });
         .replace(/(\w+)\s*\(\s*(\w+)\s*\)\s*=\s*(.*)/g, '_define("$1",function($2){return($3)});')
         // 80%(5) ==> 80*(0.01)*5

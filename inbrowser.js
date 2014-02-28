@@ -1,5 +1,5 @@
 /*
- * OwlScript In Browser v0.1.2-beta by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript In Browser v0.1.4-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -12,17 +12,11 @@
 /*** Variables ****************************************************************/
 /******************************************************************************/
 
-// OwlScript input window
-var _owlscript;
-
 // Owl
 var _owl;
 
 // run vs edit button
 var _lever;
-
-// file name wrapper
-var _file;
 
 // file name input
 var _filename;
@@ -30,14 +24,14 @@ var _filename;
 // code
 var _code;
 
-// code toolbar
-var _code_toolbar;
+// code editor block
+var _code_editor;
 
 // key processing flag
 var _key_processing = 0;
 
 // for minification purposes
-var _localStorage = localStorage;
+var _localStorage = typeof localStorage === _undefined ? {} : localStorage;
 
 /******************************************************************************/
 /*** Initialization ***********************************************************/
@@ -60,6 +54,9 @@ window.onload = function() {
 
     // self-explanatory
     _check_local_storage();
+
+    // self-explanatory
+    _attach_autosave_event();
 
     // run/edit on ESC
     addEventListener('keydown', function(e) {
@@ -86,16 +83,28 @@ window.onload = function() {
     }
 }
 
-// redraw on resize
-window.onresize = function() {
-    _initialize_image();
+// self-explanatory
+function _attach_autosave_event() {
+
+    // autosave the code every 10 keystrokes
+    _code.addEventListener('keydown', function(e) {
+
+        if(typeof _code._keys_pressed === _undefined)
+            _code._keys_pressed = 0;
+
+        if(!(_code._keys_pressed++%10)) 
+            _save_current_code();
+    });
+
 }
 
+// redraw on resize
+window.onresize = 
 // measure the screen and (re)draw
-function _initialize_image() {
+_initialize_image = function() {
     
     // do absolutely nothing if the code editor is visible
-    if(!_owlscript._hidden)
+    if(!_code_editor._hidden)
         return;
 
     // clear the screen
@@ -119,6 +128,14 @@ function _initialize_image() {
 // self-explanatory
 function _attach_toolbar_events() {
 
+
+    // home button (may not exist in the portable version)
+    if($('home'))
+        $('home').onclick = function() {
+            _save_current_code();
+            parent.location = 'index.html';
+        }
+
     // new code
     $('new_code').onclick = function() {
         _save_current_code();
@@ -127,6 +144,7 @@ function _attach_toolbar_events() {
 
     // code list
     $('list_codes').onclick = function() {
+        _hide(_code_editor);
         _list_local_codes();
     }
 
@@ -169,17 +187,11 @@ function _acquire_global_objects() {
     // acquire the notebook object
     _notebook = $('notebook');
 
-    // acquire the OwlScript editor object
-    _owlscript = $('owlscript');
-
-    // acquire the code
+    // acquire the code TEXTAREA
     _code = $('code');
 
     // acquire The Owl
     _owl = $('owl');
-
-    // acquire the file name wrapper
-    _file = $('file');
 
     // acquire the file name input
     _filename = $('filename');
@@ -187,8 +199,8 @@ function _acquire_global_objects() {
     // acquire the lever
     _lever = $('lever');
  
-    // acquire the code toolbar   
-    _code_toolbar = $('code_toolbar');
+    // acquire the code editor block
+    _code_editor = $('code_editor');
 }
 
 /******************************************************************************/
@@ -199,9 +211,7 @@ function _acquire_global_objects() {
 function _show_code_editor() {
 
     // show the code editor
-    _show(_code_toolbar);
-    _show(_owlscript);
-    _show(_file);
+    _show(_code_editor);
 
     // show the owl
     _show(_owl);
@@ -215,16 +225,14 @@ function _show_code_editor() {
     _canvas_object._add_class('dim');
 
     // focus on TEXTAREA
-    _owlscript.focus();
+    _code.focus();
 }
 
 // self-explanatory
 function _hide_code_editor() {
 
     // hide the code editor
-    _hide(_code_toolbar);
-    _hide(_owlscript);
-    _hide(_file);
+    _hide(_code_editor);
 
     // hide the owl
     _hide(_owl);
@@ -252,9 +260,9 @@ function _attempt_to_run_the_code() {
     _save_current_code();
 
     // if the code editor is hidden
-    if(_owlscript._hidden == 1) {
+    if(_code_editor._hidden == 1) {
         // mark the code editor visible
-        _owlscript._hidden = 0;
+        _code_editor._hidden = 0;
         // show it
         _show_code_editor()
         // stop animation and/or repetition
@@ -265,7 +273,7 @@ function _attempt_to_run_the_code() {
         // continue animation and/or repetition
         _stop_loops = 0;
         // the code editor is hidden
-        _owlscript._hidden = 1;
+        _code_editor._hidden = 1;
         // attempt to process the code
         try {
             // process the new code
@@ -274,7 +282,7 @@ function _attempt_to_run_the_code() {
         // if an error is encountered
         catch(error) {
             // just kidding, code editor is not really hidden
-            _owlscript._hidden = 0;
+            _code_editor._hidden = 0;
             // prevent any loops from starting
             _stop_loops = 1;
             // display it
@@ -286,7 +294,7 @@ function _attempt_to_run_the_code() {
         }
         catch(error) {
             // just kidding, code editor is not really hidden
-            _owlscript._hidden = 0;
+            _code_editor._hidden = 0;
             // prevent any loops from starting
             _stop_loops = 1;
             // display it
@@ -408,6 +416,9 @@ function _check_local_storage() {
     // otherwise create first local code
     else
         _initialize_local_storage();
+
+    // self-explanatory
+    _resize_filename_field();
 }
 
 // save current code, create new code
@@ -490,8 +501,9 @@ function _list_local_codes() {
 
     // attach delegated click event
     table.addEventListener('click', function(e) {
-        _load_code(e.target.parentNode.firstChild.innerHTML);
+        _show(_code_editor);
         _hide_window('_code_list');
+        _load_code(e.target.parentNode.firstChild.innerHTML);
     });
 
     // inject it with aforecreated content
@@ -535,6 +547,7 @@ function _attach_tab_event() {
 function _attach_filename_resizing_event() {
 
     _filename.onfocus =
+    _filename.onchange =
     _filename.onkeydown =
     _filename.onkeyup = function() {
 
@@ -568,7 +581,7 @@ function _resize_filename_field() {
     div.parentNode.removeChild(div);
 
     // resize the input field, unless it is larger than half of the code editor
-    if(size < _owlscript.getBoundingClientRect().width/2) {
+    if(size < _code.getBoundingClientRect().width/2) {
         _filename.parentNode.style.width = 
         _filename.style.width = size + 16 + 'px';
     }
@@ -599,16 +612,17 @@ function _create_window(id, width, height, left, top) {
     xxx.className = 'window_close translucent hide superhide';
 
     // position them
-    div.style.width  = width  || '50%';
-    div.style.height = height || '50%';
+    div.style.width  = width  || 'calc(75% - 4em)';
+    div.style.height = height || 'calc(75% - 4em)';
     xxx.style.left   =
-    div.style.left   = left   || '25%';
+    div.style.left   = left   || '12.5%';
     xxx.style.top    =
-    div.style.top    = top    || '25%';
+    div.style.top    = top    || '12.5%';
 
     // attach close event to the [x]
     xxx.onclick = function() {
         _hide_window(id);
+        _show(_code_editor);
     }
 
     // attach them to the body

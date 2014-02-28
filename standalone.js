@@ -1,6 +1,5 @@
-
 /*
- * OwlScript Standalone v0.1.2-beta by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript Standalone v0.1.4-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -9,14 +8,15 @@
  *
  */
 
-
 // self-explanatory
 function $(id) {
     return document.getElementById(id);
 }
 
+// redraw on resize
+window.onresize =
 // measure the screen and (re)draw
-function _initialize_image() {
+_initialize_image = function() {
 
     // clear the screen
     _canvas_object.width  = width  = window.innerWidth;
@@ -75,7 +75,3 @@ window.onload = function() {
     _initialize_image();
 }
 
-// redraw on resize
-window.onresize = function() {
-    _initialize_image();
-}
