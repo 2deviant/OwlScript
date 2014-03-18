@@ -1,0 +1,89 @@
+<script src='http://2deviant.github.io/OwlScript/owlscript_min.js'></script><a id='owlscript'>
+
+function hand(angle, r, color, thickness) {
+    line(
+        x, y,
+        x + r*sin(angle),
+        y - r*cos(angle),
+        color, thickness
+    )
+}
+
+function main() {
+
+    // draw the clock in the center of the screen
+    x = width/2
+    y = height/2
+
+    // radius of the clock is the third of the smallest dimension
+    r = 0.45*min(width, height)
+
+    // draw the dial
+    circle(x, y, r, 'black', 0.1*r);
+    disk(x, y, 0.9*r, 'blue');
+
+    // draw the minute marks
+    loop(0, 360, 360/60, a {
+        disk(
+            x + 0.8*r*cos(a),
+            y + 0.8*r*sin(a),
+            0.025*r,
+            'cyan'
+        )
+    })
+
+    // draw the hour marks
+    loop(0, 360, 360/12, a {
+        disk(
+            x + 0.8*r*cos(a),
+            y + 0.8*r*sin(a),
+            0.05*r,
+            'yellow'
+        )
+    })
+
+    // get current time
+    s = time().second;
+    m = time().minute;
+    h = time().hour;
+
+    print(width);
+
+    // draw the hands
+    second_angle = s*360/60
+    minute_angle = (m+s/60)*360/60
+      hour_angle = (h + m/60 + s/3600)*360/12
+
+    // hour
+    line(
+        x, y,
+        x + 0.65*r*sin(hour_angle),
+        y - 0.65*r*cos(hour_angle),
+        'navy', .05*r
+    )
+
+    // minute
+    line(
+        x, y,
+        x + 0.7*r*sin(minute_angle),
+        y - 0.7*r*cos(minute_angle),
+        'orange', .025*r
+    )
+
+    // second
+    line(
+        x, y,
+        x + 0.75*r*sin(second_angle),
+        y - 0.75*r*cos(second_angle),
+        'white', 2
+    )
+
+    // center screw
+    disk(x, y, 0.05*r, 'lime');
+    disk(x, y, 0.025*r, 'white');
+
+    repeat(1);
+
+}
+
+</a>

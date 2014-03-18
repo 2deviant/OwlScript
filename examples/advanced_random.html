@@ -10,7 +10,7 @@ rim = 1 + round(min_dim/50)
 max_radius = round(min_dim/10)
 
 // draw 100 circles
-loop(100, {
+loop 100
 
     // random radius between 10 to max_radius pixels
     r = random(10, max_radius)
@@ -29,6 +29,5 @@ loop(100, {
     // colored circle
     fill_circle(x, y, r, random('color'))
 
-})
-
+end
 </a>
