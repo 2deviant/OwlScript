@@ -1,0 +1,35 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// shorthand for screen dimensions
+w = width
+h = height
+
+// largest radius
+from = min(w/2, h)/2
+
+// smallest radius
+to = 5
+
+// 30 +/- 1 steps from largest to smallest radius
+step = (to - from)/30
+
+// starting angle
+angle = 0
+
+// angle step in degrees
+angle_step = 3
+
+loop(from, to, step, r {
+
+    // rotate the polygon
+    rotate(angle)
+
+    // draw the polygons
+    fill_regular_polygon(  w/4, h/2, r, 5, random('color'))
+         regular_polygon(3*w/4, h/2, r, 5, 'black', 2)
+
+    // increment the angle
+    angle = angle + angle_step
+})
+
+</a>

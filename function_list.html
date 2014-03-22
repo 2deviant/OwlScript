@@ -44,6 +44,87 @@
                 </td>
             </tr>
         </table>
+        <h2>Key Words</h2>
+        <table class='list'>
+            <tr>
+                <td>Key Word</td>
+                <td>Description & Example</td>
+            </tr>
+            <tr>
+                <td>if(condition) {
+    ...
+}
+else {
+    ...
+}</td>
+                <td>
+                    <p>
+                        Standard conditional statement.  <b>else</b> is optional.
+                        If the <b>condition</b> is true, the code in braces is executed.
+                    </p>
+                    <span>if( x > 100 ) {
+    print('x is greater than 100')
+}
+else {
+    print('x is less than or equal to 100')
+}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>static [variable] = [value]</td>
+                <td>
+                    <p>
+                        Initialize a variable whose value will be preserved on
+                        successive loop() and animate() calls.
+                    </p>
+                    <span>static i = 1
+print('Die rolling attempt #' + i + ' : ' + random(1, 6))
+i = i + 1
+loop()</span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <p>
+                        Produces:
+                    </p>
+                    <span>Die rolling attempt #1 : 4
+Die rolling attempt #2 : 3
+Die rolling attempt #3 : 3
+Die rolling attempt #4 : 3
+Die rolling attempt #5 : 5
+Die rolling attempt #6 : 4
+Die rolling attempt #7 : 4</span>
+                </td>
+            </tr>
+            <tr>
+                <td>once { ... }</td>
+                <td>
+                    <p>
+                        The contents of the <b>once</b> block are executed only once
+                        and bypassed on successive loop() and animate() calls.
+                        <b>once</b> is a more robust version of <b>static</b>.
+                        The following code blocks are equivalent:
+                    </p>
+                    <span>static x = 1
+static y = 2
+static z = [1, 2, 3, 4, 5]</span>
+                    <span>once {
+    x = 1
+    y = 1
+    z = [1, 2, 3, 4, 5]
+}</span>
+                    <span>once {
+    x = y = 1
+    z = []
+    loop(5, i {
+        z[i] = i
+    })
+}</span>
+                </td>
+            </tr>
+        </table>
         <h2>Text Output</h2>
         <table class='list'>
             <tr>
@@ -77,31 +158,42 @@ print('Resize the browser window to see what happens!', 'red')</span>
                 </td>
             </tr>
             <tr>
-                <td>set_default_color(color)</td>
+                <td>opacity(percent)</td>
+                <td>
+                    <p>
+                        Set the opacity of the next and all subsequent objects
+                        to be drawn. 0 = completely transparent, 100 = completely
+                        opaque.
+                    </p>
+                    <span>opacity(50)</span>
+                </td>
+            </tr>
+            <tr>
+                <td>color(color)</td>
                 <td>
                     <p>
                         Set default drawing color, which is originally black.
                     </p>
-                    <span>set_default_color('yellow')</span>
+                    <span>color('yellow')</span>
                 </td>
             </tr>
             <tr>
-                <td>set_default_background_color(color)</td>
+                <td>background_color(color)</td>
                 <td>
                     <p>
                         Set default background (fill) color, which is originally
                         black.
                     </p>
-                    <span>set_default_background_color('green')</span>
+                    <span>background_color('green')</span>
                 </td>
             </tr>
             <tr>
-                <td>set_default_line_thickness(thickness)</td>
+                <td>line_thickness(thickness)</td>
                 <td>
                     <p>
                         Set default line thickness, which is originally 1.
                     </p>
-                    <span>set_default_line_thickness(17)</span>
+                    <span>line_thickness(17)</span>
                 </td>
             </tr>
         </table>
@@ -117,8 +209,8 @@ print('Resize the browser window to see what happens!', 'red')</span>
                 <td>
                     <p>
                         Draw a line of the specified thickness and color between two
-                        given points.  <u>Color and thickness are not required and are
-                        black and 1 respectively by default for all graphics primitives</u>.
+                        given points.  <u><b>color</b> and <b>thickness</b> are not required and are
+                        <b>black</b> and <b>1</b> respectively by default for all graphics primitives</u>.
                     </p>
                     <span>line(100,100, 200,200)</span>
                     <span>line(0,0, width,height, 'blue')</span>
@@ -174,6 +266,16 @@ print('Resize the browser window to see what happens!', 'red')</span>
                     </p>
                     <span>fill_circle(100,100, 80)</span>
                     <span>fill_circle(200,100, 80, 'blue')</span>
+                </td>
+            </tr>
+            <tr>
+                <td>rotate(angle)</td>
+                <td>
+                    <p>
+                        Set the default rotation angle for regular polygons and
+                        stars.
+                    </p>
+                    <span>rotate(20)</span>
                 </td>
             </tr>
             <tr>
@@ -237,6 +339,21 @@ print('Resize the browser window to see what happens!', 'red')</span>
             <tr>
                 <td>Function</td>
                 <td>Description & Example</td>
+            </tr>
+            <tr>
+                <td>randomize(seed)</td>
+                <td>
+                    <p>
+                        Seed the random number generator for predictable yet
+                        still random numbers. <b>seed</b> argument is optional.
+                        A call to any flavor of <b>random()</b> after a call to
+                        <b>randomize()</b> produces the same random numbers on
+                        successive executions.  This feature is useful during
+                        animations.
+                    </p>
+                    <span>randomize()</span>
+                    <span>randomize(23874)</span>
+                </td>
             </tr>
             <tr>
                 <td>random(a, b)</td>
@@ -437,6 +554,20 @@ end</span>
 
     fill_circle(x, y, r, c)
 end</span>
+                </td>
+            </tr>
+            <tr>
+                <td>loop(n, variable {
+    ...
+})</td>
+                <td>
+                    <p>
+                        Repeat the contents <i>n</i> while setting <i>variable</i> from
+                        1 to <i>n</i>
+                    </p>
+                    <span>loop(10, alpha {
+    print('The square of ' + alpha + ' = ' + sq(alpha))
+})</span>
                 </td>
             </tr>
             <tr>

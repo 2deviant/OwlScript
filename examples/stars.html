@@ -1,0 +1,36 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// erase the canvas with a mostly transparent white rectangle
+opacity(5)
+fill_rectangle(0,0, width,height, 'white')
+
+// restore the opacity 100%
+opacity(100)
+
+// draw ten random circles
+loop 10
+
+    // outer radius of the star
+    r = random(10, 50)
+
+    // random rotation
+    rotate(random(0,90))
+
+    // draw a random star
+    fill_star(
+        random(0, width),
+        random(0, height),
+        // inner radius
+        r/2,
+        // outer radius
+        r,
+        random(4, 8),
+        random('red')
+    )
+
+end
+
+// animate (repeat every 1/15th of a second, a.k.a. 15fps)
+loop(1/15)
+
+</a>

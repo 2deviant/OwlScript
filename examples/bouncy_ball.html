@@ -1,0 +1,68 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// return a random step
+function step() {
+
+    // random step between 20 and 30 pixels per cycle
+    return random(20, 30)
+}
+
+// initial location of the ball
+static x = round(width/2)
+static y = round(height/2)
+
+// initial speed of the ball
+static dx = step()
+static dy = step()
+
+// radius of the ball
+r = 30
+
+// if the ball leaves the boundaries of the screen
+// pick a random step in the opposite direction
+
+// right boundary
+if(x + dx + r > width) {
+    dx = -step()
+}
+
+// left boundary
+if(x + dx - r < 0) {
+    dx = step()
+}
+
+// bottom boundary
+if(y + dy + r > height) {
+    dy = -step()
+}
+
+// top boundary
+if(y + dy - r < 0) {
+    dy = step()
+}
+
+// move the ball
+x = x + dx
+y = y + dy
+
+// erase the screen with a partially transparent, white rectangle
+// which does not entirely erase the ball at its previous location
+// thus creating a fading trail
+// the smaller the number (between 0 and 100), the longer the trail
+
+// 20% opacity, or 80% transparency
+opacity(20)
+
+// draw the rectangle
+fill_rectangle(0,0, width,height, 'white')
+
+// opacity back to 100%, i.e. the circle is not transparent
+opacity(100)
+
+// draw new circle
+fill_circle(x, y, r, 'blue')
+
+// animate (repeat every 1/30th of a second, a.k.a. 30fps)
+loop(1/30)
+
+</a>

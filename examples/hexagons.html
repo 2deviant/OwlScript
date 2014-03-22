@@ -1,0 +1,51 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// hexagon radius (change this if you want)
+r = 70
+
+// apothem
+a = sqrt(3)/2
+
+// row counter
+n = 0
+
+// black background
+set_default_background_color('black')
+
+// erase previous frame
+clear_canvas()
+
+// insure predictable random numbers
+// so that hexagon colors don't flicker
+// and their rotation doesn't randomly reverse
+randomize()
+
+// angle counter
+static angle = 0
+
+// increment the angle
+angle = angle + 1
+
+// the hexagons are spaced (3/2)r vertically
+loop(0, height + r, 1.5*r, y {
+    
+    // the hexagons are spaced sqrt(3)r horizontally
+    loop(mod(n, 2)*r*a, width + r, 2*a*r, x {
+
+        // rotate the hexagon in a random direction at a random speed
+        rotate(angle*random([1, 2, -1, -2]))
+
+        // draw the hexagon
+        fill_regular_polygon(x, y, r*a, 6, random('teal'))
+
+    })
+
+    // increment the row counter
+    n = n + 1
+
+})
+
+// animate (repeat 15 times per second, a.k.a. 15fps)
+loop(1/15)
+
+</a>
