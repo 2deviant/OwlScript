@@ -81,6 +81,7 @@ window.onload = function() {
     $('lever').onclick = function() {
         _attempt_to_run_the_code();
     }
+
 }
 
 // self-explanatory
@@ -217,12 +218,12 @@ function _show_code_editor() {
     _show(_owl);
 
     // swich the run button to edit
-    _lever._remove_class('run');
+    _lever.classList.remove('run');
 
 
     // dim the background
-         _notebook._add_class('dim');
-    _canvas_object._add_class('dim');
+         _notebook.classList.add('dim');
+    _canvas_object.classList.add('dim');
 
     // focus on TEXTAREA
     _code.focus();
@@ -238,11 +239,11 @@ function _hide_code_editor() {
     _hide(_owl);
 
     // swich the edit button to run
-    _lever._add_class('run');
+    _lever.classList.add('run');
 
     // undim the background
-         _notebook._remove_class('dim');
-    _canvas_object._remove_class('dim');
+         _notebook.classList.remove('dim');
+    _canvas_object.classList.remove('dim');
 
     // hide the code list, for good measure
     if($('_code_list'))
@@ -462,7 +463,7 @@ function _list_local_codes() {
 
         // add cells to it
         for(var i = 0; i < cells.length; i++)
-            tr._append_child(_create_element('td')).innerHTML = cells[i];
+            tr.appendChild(_create_element('td')).innerHTML = cells[i];
 
         // return the row
         return tr;
@@ -470,7 +471,7 @@ function _list_local_codes() {
 
     // loop through them
     for(var i = 0; i < codeIDs.length; i++)
-        table._append_child(
+        table.appendChild(
             create_table_row([
                                          codeIDs[i],
                 _localStorage['name'    +codeIDs[i]],
@@ -488,16 +489,16 @@ function _list_local_codes() {
     // create and attach the heading
     var heading = _create_element('table');
     heading.id = 'code_list_heading';
-    heading._append_child(
+    heading.appendChild(
         create_table_row(['ID', 'Name', 'Created', 'Modified'])
     );
-    code_list._append_child(heading);
+    code_list.appendChild(heading);
 
     // create the wrapper DIV
     var div = _create_element('div');
     // ID it
     div.id = 'code_list';
-    div._append_child(table);
+    div.appendChild(table);
 
     // attach delegated click event
     table.addEventListener('click', function(e) {
@@ -507,7 +508,7 @@ function _list_local_codes() {
     });
 
     // inject it with aforecreated content
-    code_list._append_child(div);
+    code_list.appendChild(div);
     // show it
     _show_window('_code_list');
 }
@@ -572,7 +573,7 @@ function _resize_filename_field() {
     var div = _create_element('div');
     div.className = 'filename';
     div.innerHTML = _filename.value.replace(/\s/g, '&nbsp;');
-    document.body._append_child(div);
+    document.body.appendChild(div);
 
     // measure it
     var size = div.getBoundingClientRect().width;
@@ -626,8 +627,8 @@ function _create_window(id, width, height, left, top) {
     }
 
     // attach them to the body
-    document.body._append_child(div);
-    document.body._append_child(xxx);
+    document.body.appendChild(div);
+    document.body.appendChild(xxx);
 
     // return the created window
     return div;
@@ -655,33 +656,18 @@ function _create_element(tag) {
 
 // fancy hide: first dim, then display:none;
 function _hide(object) {
-    object._add_class('hide');
+    object.classList.add('hide');
     setTimeout(function() {
-        object._add_class('superhide');
+        object.classList.add('superhide');
     }, 250);
 }
 
 // fancy show: first remove display:none, then fade in
 function _show(object) {
-    object._remove_class('superhide');
+    object.classList.remove('superhide');
     setTimeout(function() {
-        object._remove_class('hide');
+        object.classList.remove('hide');
     }, 20);
-}
-
-// for minification only
-Object.prototype._add_class = function(Class) {
-    this.classList.add(Class);
-}
-
-// for minification only
-Object.prototype._remove_class = function(Class) {
-    this.classList.remove(Class);
-}
-
-// for minification only
-Object.prototype._append_child = function(child) {
-    return this.appendChild(child);
 }
 
 // self-explanatory

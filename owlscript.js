@@ -25,6 +25,7 @@ var _notebook;
 var _default_color;
 var _default_background_color;
 var _default_line_width;
+var _default_rotation_angle;
 
 // some recurring constants (for minification)
 var _tau        = 2*Math.PI;
@@ -55,24 +56,27 @@ function _initialize_defaults() {
     _default_color          = '#000';
     _default_line_width     = 1;
     _loop_in_progress       = 0;
+    _default_rotation_angle = 0;
+    _canvas.globalAlpha     = 1;
     _frames                 = [];
 
     _set_default_background_color('#fff');
 }
 
 // self-explanatory
-function set_default_color(color) {
+color = set_default_color = function(color) {
     _default_color = color;
 }
 
 // self-explanatory
-function set_default_line_width(width) {
+line_thickness = set_default_line_thickness = function(width) {
     _default_line_width = width;
 }
 
 // self-explanatory
 _set_default_background_color =
- set_default_background_color = function(color) {
+ set_default_background_color = 
+             background_color = function(color) {
     // store the color in the current canvas object
     _default_background_color =
     // change the style of the canvas
@@ -132,55 +136,91 @@ fill_rectangle = function(x0, y0, x1, y1, color) {
 }
 
 // self-explanatory
-function polygon(x, y, color, width) {
+function _draw_polygon(x, y) {
     with(_canvas) {
         beginPath();
-        lineWidth = width || _default_line_width;
-        strokeStyle = color || _default_color;
         moveTo(x[0], y[0]);
         for(var i = 1; i < x.length; i++)
             lineTo(x[i], y[i]);
         closePath();
+    }
+}
+
+// self-explanatory
+_polygon = polygon = function(x, y, color, width) {
+    with(_canvas) {
+        lineWidth = width || _default_line_width;
+        strokeStyle = color || _default_color;
+        _draw_polygon(x, y);
         stroke();
     }
 }
 
 // self-explanatory
-function fill_polygon(x, y, color) {
-    with(_canvas) {
-        beginPath();
-        fillStyle = color || _default_color;
-        moveTo(x[0], y[0]);
-        for(var i = 1; i < x.length; i++)
-            lineTo(x[i], y[i]);
-        closePath();
-        fill();
+_fill_polygon = fill_polygon = function(x, y, color) {
+    _canvas.fillStyle = color || _default_color;
+    _draw_polygon(x, y);
+    _canvas.fill();
+}
+
+// set global rotation
+function rotate(angle) {
+    _default_rotation_angle = _tau*angle/360;
+}
+
+// self-explanatory
+function opacity(alpha) {
+    _canvas.globalAlpha = alpha/100;
+}
+
+// calculate the (x,y) pairs for a regular polygon
+function _compute_regular_polygon(x, y, ri, ro, n) {
+    var X = [], Y = [];
+    for(var i=0, a=_default_rotation_angle; i<n; i++, a+=_tau/n) {
+        X[i] = x + (i%2?ri:ro)*Math.sin(a);
+        Y[i] = y - (i%2?ri:ro)*Math.cos(a);
     }
+    return [X, Y];
 }
 
 // self-explanatory
 function regular_polygon(x, y, r, n, color, width) {
-    var angles = range(0, 360*(1-1/n), 360/n);
-    polygon(
-        sin(angles).multiply( r).add(x),
-        cos(angles).multiply(-r).add(y),
-        color,
-        width);
+    star(x, y, r, r, n/2, color, width);
 }
 
 // self-explanatory
 function fill_regular_polygon(x, y, r, n, color) {
-    var angles = range(0, 360*(1-1/n), 360/n);
-    fill_polygon(
-        sin(angles).multiply( r).add(x),
-        cos(angles).multiply(-r).add(y),
-        color);
+    fill_star(x, y, r, r, n/2, color);
+}
+
+// self-explanatory
+function star(x, y, ri, ro, n, color, thickness) {
+    // compute the star
+    var xy = _compute_regular_polygon(x, y, ri, ro, 2*n);
+    // fill the polygon
+    _polygon(xy[0], xy[1], color, thickness);
+}
+
+// self-explanatory
+function fill_star(x, y, ri, ro, n, color) {
+    // compute the star
+    var xy = _compute_regular_polygon(x, y, ri, ro, 2*n);
+    // fill the polygon
+    _fill_polygon(xy[0], xy[1], color);
 }
 
 // erase with the current background color
 function clear_canvas() {
+    // clear the text output
     _notebook.innerHTML = '';
+    // store the opacity
+    var previous_opacity = _canvas.globalAlpha;
+    // set opacity to 100%
+    _canvas.globalAlpha = 1;
+    // clear the screen
     fill_rectangle(0, 0, width, height, _default_background_color);
+    // restore opacity
+    _canvas.globalAlpha = previous_opacity;
 }
 
 /******************************************************************************/
@@ -306,10 +346,10 @@ loop = repeat = function(from, to, step, action) {
         return;
     }
         
-    // no 'to' or 'step' implies that the function is to looped 'from' times
+    // no 'to' or 'step' implies that the function is to looped from 1 to 'from'
     if(typeof to === 'function')
-        for(var i = from; i-->0;)
-            to();
+        for(var i = 1; i <= from; i++)
+            to(i);
     else
         range(from, to, step).loop(action);
 }
@@ -336,6 +376,7 @@ function _define(name, action) {
         'abs'       : function(y) { return Math.abs(y) },
         'sin'       : function(y) { return Math.sin(y*_tau/360) },
         'cos'       : function(y) { return Math.cos(y*_tau/360) },
+        'tan'       : function(y) { return Math.tan(y*_tau/360) },
         'round'     : function(y) { return Math.round(y) },
         'sign'      : function(y) { return y < 0 ? -1 : 1 },
         'sqrt'      : function(y) { return Math.sqrt(y) },
@@ -348,12 +389,24 @@ function _define(name, action) {
 
 // modulus
 function mod(a, b) {
+    // if a is an array, do the thing
+    if(typeof a === _object) {
+        for(var i = a.length, c = []; i-->0; c[i] = a[i] % b);
+        return c;
+    }
     return a % b;
 }
 
 // part of the simplified power consutrct: a ^ b ==> Math.pow(a, b)
 Number.prototype._power = function(n) {
     return Math.pow(this.valueOf(), n);
+}
+
+// part of the simplified prray ower consutrct
+Array.prototype._power = function(n) {
+    var a = this.valueOf(), b = [];
+    for(var i = a.length; i-->0; b[i] = Math.pow(a[i], n));
+    return b;
 }
 
 /*
@@ -423,6 +476,14 @@ _random = random = function(min, max) {
     return min % 1 == 0 && max % 1 == 0 ?
         min + rnd % (max - min + 1) :
         min + rnd * (max - min)/4294967297;     // 2^32 + 1
+}
+
+// seed SimpleRNG for predictable randomness
+function randomize(seed) {
+    if(typeof seed === _undefined)
+        seed = 0;
+    _SimpleRNG_U = 0xface1e55 + seed;
+    _SimpleRNG_V = 0xbeef1e55 - seed;
 }
 
 // objectify x
@@ -520,7 +581,9 @@ function _parse(code) {
 
     return code
         // x { ==> function(x) {
-        .replace(/(\w+)\s*{/g, 'function($1){')
+        .replace(/(\w+)\s*{/g, function(match, contents, offset, s) {
+            return contents.match(/(else|once)/) ? match : 'function('+contents+'){';
+            })
         // , , ==> , 0 ,   or   ( , ==> ( 0 ,
         .replace(/([(,])\s*,/g, '$1 0,')
         // loop(50, { ==> loop(50, function(___) {
@@ -531,11 +594,10 @@ function _parse(code) {
         .replace(/end/gi, '})')
         // f(x) = sin(x+1) ==> _define("f", function(x) { return sin(x); });
         .replace(/(\w+)\s*\(\s*(\w+)\s*\)\s*=\s*(.*)/g, '_define("$1",function($2){return($3)});')
-        // 80%(5) ==> 80*(0.01)*5
-        // 80*%(5) ==> 80*(0.01)*5
-        // 80*%(*5) ==> 80*(0.01)*5
-        // 80*%(**5) ==> 80*(0.01)*5
-        .replace(/\s*\**\s*%\s*\**\s*/g, '*(0.01)*')
+        // static variables
+        .replace(/static\s+(\w+)\s*=/g,'if(!_loop_in_progress||!_animation_in_progress)$1=')
+        // kind of like static variables
+        .replace(/once\s*{/g,'if(!_loop_in_progress||!_animation_in_progress){')
         // a ^ b ==> Math.pow(a, b)
         .replace(/\^\s*([\w\.]+)\s*/g, ' ._power($1)')
         .replace(/\s*\^\s*/g, ' ._power');

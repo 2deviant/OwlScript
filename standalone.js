@@ -1,5 +1,5 @@
 /*
- * OwlScript Standalone v0.1.4-beta by Val Tenyotkin (val@tenyotk.in)
+ * OwlScript Standalone v0.1.5-beta by Val Tenyotkin (val@tenyotk.in)
  *
  * Variables and properties prefixed with an underscore, though global, are
  * internal and can be minified.  Global minification to common variable names
@@ -65,7 +65,9 @@ window.onload = function() {
 
     // extract the code and delete its container
     var input = $('owlscript');
-    var code = input.parentNode.removeChild(input).innerHTML;
+    var code = input.parentNode.removeChild(input).innerHTML
+        .replace(/&gt;/g, '>')
+        .replace(/&lt;/g, '<');
 
     // create the new script element and parse the code
     document.body.appendChild(document.createElement('script')).innerHTML =
