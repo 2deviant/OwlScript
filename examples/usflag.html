@@ -1,0 +1,55 @@
+<script src='http://www.owlscript.org/owlscript_min.js'></script><a id='owlscript'>
+
+// Official US Flag Specifications
+// http://en.wikipedia.org/wiki/Flag_of_the_United_States#Specifications
+
+// dimensions
+aspect   = 1.9
+stripe   = 1/13
+canton_h = 7*stripe
+canton_w = (2/5)*aspect
+star_r   = (2/5)*stripe
+star_dy  = canton_h/10
+star_dx  = canton_w/12
+
+// colors
+red      = '#B22234'
+blue     = '#3C3B6E'
+white    = '#e2ddd3'
+
+// ensure proper aspect ratio on any screen
+w = min(height*aspect, width)
+h = w/aspect
+
+// stripes
+loop(13, i {
+
+    fill_rectangle(
+        0, (i-1)*h*stripe,
+        w,  i   *h*stripe,
+        [white,red][mod(i,2)]
+    )
+    
+})
+
+// canton
+fill_rectangle(0, 0, canton_w*h, canton_h*h, blue)
+
+// stars
+// 9 rows
+loop(9, y {
+
+    // alternating rows of 6 and 5 stars
+    loop(6 - mod(y+1, 2), x {
+
+        fill_star(
+            star_dx*(2*x - mod(y,2))*h,
+            star_dy*(h*y + 1),
+            h*star_r/2.5, h*star_r, 5, white
+        )
+
+    })
+
+})
+
+</a>
