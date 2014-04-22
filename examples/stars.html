@@ -4,14 +4,18 @@
 opacity(5)
 fill_rectangle(0,0, width,height, 'white')
 
-// restore the opacity 100%
+// restore the opacity to 100%
 opacity(100)
+
+// size of the star is tied to the screen dimensions
+r_min = min(width, height)/100
+r_max = 5*r_min
 
 // draw ten random circles
 loop 10
 
     // outer radius of the star
-    r = random(10, 50)
+    r = random(r_min, r_max)
 
     // random rotation
     rotate(random(0,90))
